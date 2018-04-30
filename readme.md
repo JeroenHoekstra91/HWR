@@ -28,3 +28,12 @@ To add a new dependencies:
 * run `pip freeze > requirements.txt`
 
 The first command will install the desired package, while the second updates the requirements.txt file.
+
+**removing a dependency:**
+
+To remove an installed dependency:
+
+* run `pip uninstall <package>`
+* run `pip freeze > requirements.txt`
+
+The first command will uninstall the desired package, while the second updates the requirements.txt file.
