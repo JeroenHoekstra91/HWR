@@ -19,3 +19,12 @@ Python application for optical character recognition of characters from the dead
 * [Python](https://www.python.org/) 2.7.x.
 * [pip](http://www.pip-installer.org)
 * virtualenv
+
+**adding dependencies:**
+
+To add a new dependencies:
+
+* run `pip install <package>`
+* run `pip freeze > requirements.txt`
+
+The first command will install the desired package, while the second updates the requirements.txt file.
