@@ -12,7 +12,7 @@ class LeNet:
      def build(width, height, depth, classes, weightsPath=None):
          # initialize the model
          model = Sequential()
-         input_shape=(height, width, depth)
+         inputShape=(height, width, depth)
 
          # if we are using "channels first", update the input shape
          if K.image_data_format() == "channels_first":

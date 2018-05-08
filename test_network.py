@@ -9,6 +9,36 @@ import argparse
 import imutils
 import cv2
 
+char_map = {
+    "Alef"  : 0,
+    "Ayin"  : 1,
+    "Bet"   : 2,
+    "Dalet" : 3,
+    "Gimel" : 4,
+    "He"    : 5,
+    "Het": 6,
+    "Kaf": 7,
+    "Kaf-final": 8,
+    "Lamed": 9,
+    "Mem": 10,
+    "Mem-medial": 11,
+    "Nun-final": 12,
+    "Nun-medial": 13,
+    "Pe": 14,
+    "Pe-final": 15,
+    "Qof": 16,
+    "Resh": 17,
+    "Samekh": 18,
+    "Shin": 19,
+    "Taw": 20,
+    "Tet": 21,
+    "Tsadi-final": 22,
+    "Tsadi-medial": 23,
+    "Waw": 24,
+    "Yod": 25,
+    "Zayin": 26,
+}
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True,
@@ -32,11 +62,12 @@ print("[INFO] loading network...")
 model = load_model(args["model"])
 
 # classify the input image
-(notSanta, santa) = model.predict(image)[0]
+prediction = model.predict(image)[0]
+argmax = np.argmax(prediction)
 
 # build the label
-label = "Santa" if santa > notSanta else "Not Santa"
-proba = santa if santa > notSanta else notSanta
+label = char_map.keys()[argmax]
+proba = prediction[argmax]
 label = "{}: {:.2f}%".format(label, proba * 100)
 
 # draw the label on the image

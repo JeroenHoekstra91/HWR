@@ -18,6 +18,36 @@ import random
 import cv2
 import os
 
+char_map = {
+    "Alef"  : 0,
+    "Ayin"  : 1,
+    "Bet"   : 2,
+    "Dalet" : 3,
+    "Gimel" : 4,
+    "He"    : 5,
+    "Het": 6,
+    "Kaf": 7,
+    "Kaf-final": 8,
+    "Lamed": 9,
+    "Mem": 10,
+    "Mem-medial": 11,
+    "Nun-final": 12,
+    "Nun-medial": 13,
+    "Pe": 14,
+    "Pe-final": 15,
+    "Qof": 16,
+    "Resh": 17,
+    "Samekh": 18,
+    "Shin": 19,
+    "Taw": 20,
+    "Tet": 21,
+    "Tsadi-final": 22,
+    "Tsadi-medial": 23,
+    "Waw": 24,
+    "Yod": 25,
+    "Zayin": 26,
+}
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -39,9 +69,14 @@ data = []
 labels = []
 
 # grab the image paths and randomly shuffle them
-imagePaths = sorted(list(paths.list_images(args["dataset"])))
+imagePaths = []
 random.seed(42)
 random.shuffle(imagePaths)
+
+for root, dirs, files in os.walk(args["dataset"]):
+    for name in files:
+        imagePaths.append(os.path.join(root, name))
+imagePaths.sort()
 
 # loop over the input images
 for imagePath in imagePaths:
@@ -54,8 +89,7 @@ for imagePath in imagePaths:
     # extract the class label from the image path and update the
     # labels list
     label = imagePath.split(os.path.sep)[-2]
-    label = 1 if label == "santa" else 0
-    labels.append(label)
+    labels.append(char_map[label])
 
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -67,8 +101,8 @@ labels = np.array(labels)
                                                   labels, test_size=0.25, random_state=42)
 
 # convert the labels from integers to vectors
-trainY = to_categorical(trainY, num_classes=2)
-testY = to_categorical(testY, num_classes=2)
+trainY = to_categorical(trainY, num_classes=27)
+testY = to_categorical(testY, num_classes=27)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
@@ -77,7 +111,7 @@ aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 
 # initialize the model
 print("[INFO] compiling model...")
-model = LeNet.build(width=28, height=28, depth=3, classes=2)
+model = LeNet.build(width=28, height=28, depth=3, classes=27)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
               metrics=["accuracy"])
