@@ -65,11 +65,9 @@ model = load_model(args["model"])
 prediction = model.predict(image)[0]
 print("Prediction", prediction * 100)
 argmax = np.argmax(prediction)
-print("Argmax", argmax)
 
 # build the label
 label = char_map.keys()[char_map.values().index(argmax)]
-print("Label", label)
 proba = prediction[argmax]
 label = "{}: {:.2f}%".format(label, proba * 100)
 
