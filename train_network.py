@@ -76,7 +76,7 @@ random.shuffle(imagePaths)
 for root, dirs, files in os.walk(args["dataset"]):
     for name in files:
         imagePaths.append(os.path.join(root, name))
-imagePaths.sort()
+# imagePaths.sort()
 
 # loop over the input images
 for imagePath in imagePaths:
