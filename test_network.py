@@ -62,8 +62,18 @@ print("[INFO] loading network...")
 model = load_model(args["model"])
 
 # classify the input image
-prediction = model.predict(image)[0]
-print("Prediction", prediction * 100)
+prediction = list(model.predict(image)[0])
+
+results = {}
+
+for i in range(len(prediction)):
+    label = char_map.keys().sort()[i]
+    if prediction[i] in results.keys():
+        results[prediction[i]].append(label)
+    else:
+        results[prediction[i]] = [label]
+
+print("Prediction", sorted(prediction, reverse=True))
 argmax = np.argmax(prediction)
 
 # build the label
