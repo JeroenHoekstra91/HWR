@@ -63,17 +63,17 @@ model = load_model(args["model"])
 
 # classify the input image
 prediction = list(model.predict(image)[0])
-
 results = {}
 
 for i in range(len(prediction)):
-    label = char_map.keys().sort()[i]
+    label = sorted(char_map.keys())[i]
     if prediction[i] in results.keys():
         results[prediction[i]].append(label)
     else:
         results[prediction[i]] = [label]
 
 print("Prediction", sorted(prediction, reverse=True))
+print(results)
 argmax = np.argmax(prediction)
 
 # build the label
