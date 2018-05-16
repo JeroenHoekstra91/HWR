@@ -16,19 +16,20 @@ for root, dirs, files in os.walk(args["dataset"]):
 print len(imagePaths)
 
 # ----------------------------------
-STATE = [1]
-INTERVAL = [1]
-MAX_STATE = [33] # Inclusive
 # State indices
 SHEAR = 0
 SALT_AND_PEPPER = 1
 GAUSSIAN_NOISE = 2
 
+MIN_STATE   = [0,   0  , -16]
+INTERVAL    = [0.2, 0.2, 1]
+MAX_STATE   = [0.6, 0.6, 16]
+
+STATE = [0,0,0]
+ORIGINAL_IMAGE = [0,0,0]
+
 def reset_state():
-    # SP, GN, SHEAR
-    STATE[0] = 1
-    for i in range(1, len(STATE)):
-        STATE[i] = 0
+    STATE = list(MIN_STATE)
 
 def increment_state():
     i = 0;
@@ -48,6 +49,9 @@ for imagePath in imagePaths:
     image = cv2.imread(imagePath)
 
     while(True):
+        if STATE == ORIGINAL_IMAGE:
+            break;
+
         seq = iaa.Sequential([
             iaa.Affine(shear=(STATE[SHEAR]-17),
                        cval=(255)),
