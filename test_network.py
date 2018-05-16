@@ -74,6 +74,7 @@ for i in range(len(prediction)):
 
 print("Prediction", sorted(prediction, reverse=True))
 print(results)
+
 argmax = np.argmax(prediction)
 
 # build the label
