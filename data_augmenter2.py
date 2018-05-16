@@ -17,25 +17,23 @@ print len(imagePaths)
 
 # ----------------------------------
 # State indices
-SHEAR = 0
-SALT_AND_PEPPER = 1
-GAUSSIAN_NOISE = 2
+SALT_AND_PEPPER = 0
+GAUSSIAN_NOISE = 1
+SHEAR = 2
 
-MIN_STATE   = [0,   0  , -16]
-INTERVAL    = [0.2, 0.2, 1]
-MAX_STATE   = [0.6, 0.6, 16]
+MIN_STATE   = [0  , 0  , -16]
+INTERVAL    = [0.1, 0.1, 1]
+MAX_STATE   = [0.4, 0.4, 16]
 
-STATE = [0,0,0]
-ORIGINAL_IMAGE = [0,0,0]
-
-def reset_state():
-    STATE = list(MIN_STATE)
+STATE = list(MIN_STATE)
+print STATE
+ORIGINAL_IMAGE = [0]*len(MIN_STATE)
 
 def increment_state():
     i = 0;
     while i < len(STATE):
         if STATE[i] == MAX_STATE[i]:
-            STATE[i] = 0
+            STATE[i] = MIN_STATE[i]
         else:
             STATE[i] = STATE[i] + INTERVAL[i]
             break
@@ -43,30 +41,29 @@ def increment_state():
 
 # loop over the input images
 j = 0
-reset_state()
 for imagePath in imagePaths:
     # load the image, pre-process it, and store it in the data list
     image = cv2.imread(imagePath)
 
     while(True):
         if STATE == ORIGINAL_IMAGE:
-            break;
+            increment_state()
+            continue;
 
         seq = iaa.Sequential([
-            iaa.Affine(shear=(STATE[SHEAR]-17),
+            iaa.Affine(shear=(STATE[SHEAR]),
                        cval=(255)),
-            # iaa.AdditiveGaussianNoise(0, STATE[GAUSSIAN_NOISE]/100),
-
+            iaa.AdditiveGaussianNoise(scale=255*STATE[GAUSSIAN_NOISE]),
+            iaa.SaltAndPepper(p=STATE[SALT_AND_PEPPER])
         ])
 
         images_aug = seq.augment_image(image)
 
-        # cv2.imwrite("images/Pe-final/test"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[GAUSSIAN_NOISE])+
-        #             "-SP"+str(STATE[SALT_AND_PEPPER])+".png", images_aug)
+        cv2.imwrite("images/Pe-final/test"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[GAUSSIAN_NOISE])+
+                    "-SP"+str(STATE[SALT_AND_PEPPER])+".png", images_aug)
 
-        cv2.imwrite("images/Pe-final/test" + str(j) + "-S" + str(STATE[SHEAR]) + ".png", images_aug)
         if(STATE == MAX_STATE):
-            reset_state()
+            STATE = list(MIN_STATE)
             break
         else:
             increment_state()
