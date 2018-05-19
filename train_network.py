@@ -1,4 +1,6 @@
 # set the matplotlib backend so figures can be saved in the background
+import datetime
+
 import matplotlib
 
 matplotlib.use("Agg")
@@ -48,6 +50,8 @@ char_map = {
     "Zayin": 26,
 }
 
+print datetime.datetime.now().time()
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -71,12 +75,12 @@ labels = []
 # grab the image paths and randomly shuffle them
 imagePaths = []
 random.seed(42)
-random.shuffle(imagePaths)
 
 for root, dirs, files in os.walk(args["dataset"]):
     for name in files:
         imagePaths.append(os.path.join(root, name))
-# imagePaths.sort()
+
+random.shuffle(imagePaths)
 
 # loop over the input images
 for imagePath in imagePaths:
@@ -104,10 +108,10 @@ labels = np.array(labels)
 trainY = to_categorical(trainY, num_classes=27)
 testY = to_categorical(testY, num_classes=27)
 
-# construct the image generator for data augmentation
-aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
-	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-	horizontal_flip=True, fill_mode="nearest")
+# # construct the image generator for data augmentation
+# aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
+# 	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+# 	horizontal_flip=True, fill_mode="nearest")
 
 # initialize the model
 print("[INFO] compiling model...")
@@ -118,9 +122,12 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 
 # train the network
 print("[INFO] training network...")
-H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
-                        validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
-                        epochs=EPOCHS, verbose=1)
+# H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
+#                         validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
+#                         epochs=EPOCHS, verbose=1)
+H = model.fit(trainX, trainY,
+                        validation_data=(testX, testY),
+                        epochs=5, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")
@@ -139,3 +146,5 @@ plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
 plt.savefig(args["plot"])
+
+print datetime.datetime.now().time()

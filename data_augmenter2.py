@@ -2,18 +2,19 @@ import argparse
 import os
 from imgaug import augmenters as iaa
 import cv2
+import datetime
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
 	help="path to input dataset")
 args = vars(ap.parse_args())
 
+print datetime.datetime.now().time()
+
 imagePaths = []
 for root, dirs, files in os.walk(args["dataset"]):
     for name in files:
         imagePaths.append(os.path.join(root, name))
-
-print len(imagePaths)
 
 # ----------------------------------
 # State indices
@@ -26,7 +27,6 @@ INTERVAL    = [0.1, 0.1, 1]
 MAX_STATE   = [0.4, 0.4, 16]
 
 STATE = list(MIN_STATE)
-print STATE
 ORIGINAL_IMAGE = [0]*len(MIN_STATE)
 
 def increment_state():
@@ -59,7 +59,7 @@ for imagePath in imagePaths:
 
         images_aug = seq.augment_image(image)
 
-        cv2.imwrite("images/Pe-final/test"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[GAUSSIAN_NOISE])+
+        cv2.imwrite(os.path.split(imagePath)[0]+"/Augmented"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[GAUSSIAN_NOISE])+
                     "-SP"+str(STATE[SALT_AND_PEPPER])+".png", images_aug)
 
         if(STATE == MAX_STATE):
@@ -69,3 +69,5 @@ for imagePath in imagePaths:
             increment_state()
 
     j = j+1
+
+print datetime.datetime.now().time()
