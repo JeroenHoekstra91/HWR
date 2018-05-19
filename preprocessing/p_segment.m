@@ -20,7 +20,8 @@ function r = p_segment( I_cur )
 
     % Step - 3 : Reconstruct parment area
     e_2_grey = uint8(e_2*255);
-%     r = imreconstruct(e_2_grey, I_cur);  % use to reconstruct greyscale image
-    r =  imreconstruct(e_2, I_bin);    % use to reconstrct binary image    
+    r = imreconstruct(e_2_grey, I_cur);  % use to reconstruct greyscale image
+%     r =  imreconstruct(e_2, I_bin);    % use to reconstrct binary image    
+    r(r < 16) = 0; %Threshold dark values.
 end
 

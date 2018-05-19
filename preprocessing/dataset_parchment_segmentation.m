@@ -13,7 +13,9 @@ function P = dataset_parchment_segmentation(src)
         Isegmented = I;
         Isegmented(Isr2) = 0;
 %         imwrite(Isegmented, strcat(save_dir, num2str(i), 'applying-segmentation.png'));
-        P{i} = Isegmented;
+%         P{i} = Isegmented;
+        
+        P{i} = Is;
 %         Is = cast(Is, 'uint8');
 %         Is(Is == 1) = 255;
 %         P{i} = Is;

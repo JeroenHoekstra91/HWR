@@ -30,15 +30,17 @@ function binarization_gui
     f = figure('Visible','off','units','normalized','outerposition',[0 0 1 1]);
     ax = axes('Units','pixels');
 	update
-
+    
+    source_list = {'original','parchment only','sauvola', 'otsu', 'line histogram'};
+    
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
-       'String', {'original','parchment only','sauvola', 'otsu'},...
+       'String', source_list,...
        'Position', [20 550 100 50],...
        'Callback', @setsource, 'Tag', 'source1');    
    
     popup2 = uicontrol('Style', 'popup',...
-       'String', {'original','parchment only','sauvola', 'otsu'},...
+       'String', source_list,...
        'Position', [900 550 100 50],...
        'Callback', @setsource, 'Tag', 'source2', 'val', 2);    
    
@@ -115,9 +117,27 @@ function binarization_gui
     end
 
     function save(source, event)
-        OW = uint8(ones(size(I,1),(2*size(I,2)+20))*255);
-        OW(1:size(I,1),1:size(I,2),1) = O1;
-        OW(1:size(I,1),size(I,2)+21:size(OW,2)) = O2;
+        if length(size(O1)) > 2 | length(size(O2)) > 2
+            OW = uint8(ones(size(I,1),(2*size(I,2)+20),3)*255);
+            if length(size(O1)) > 2
+                OW(1:size(I,1),1:size(I,2),:) = O1;
+            else
+                OW(1:size(I,1),1:size(I,2),1) = O1;
+                OW(1:size(I,1),1:size(I,2),2) = O1;
+                OW(1:size(I,1),1:size(I,2),3) = O1;
+            end
+            if length(size(O2)) > 2
+                OW(1:size(I,1),size(I,2)+21:size(OW,2),:) = O2;
+            else
+                OW(1:size(I,1),size(I,2)+21:size(OW,2),1) = O2;
+                OW(1:size(I,1),size(I,2)+21:size(OW,2),2) = O2;
+                OW(1:size(I,1),size(I,2)+21:size(OW,2),3) = O2;
+            end
+        else
+            OW = uint8(ones(size(I,1),(2*size(I,2)+20))*255);
+            OW(1:size(I,1),1:size(I,2),1) = O1;
+            OW(1:size(I,1),size(I,2)+21:size(OW,2)) = O2;
+        end
         imwrite(OW, strcat(save_path, num2str(idx), '_', src1, '_', src2, '.png'));
     end
 
@@ -141,6 +161,9 @@ function binarization_gui
                 O1 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
+            case 'line histogram'
+                BW = binarization(P, sz, k, 'sauvola');
+                [~, O1] = line_histogram(I, BW);
         end
         switch src2
             case 'original'
@@ -151,10 +174,18 @@ function binarization_gui
                 O2 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O2 = imbinarize(P, graythresh(P))*255;
+            case 'line histogram'
+                BW = binarization(P, sz, k, 'sauvola');
+                [~, O2] = line_histogram(P, BW);
         end
+        disp(class(O1));
+        disp(class(O2));
         subplot(1,2,1);
         imshow(O1);
         subplot(1,2,2);
         imshow(O2);        
     end
 end
+
+%TODO: -Implement histogram peak detection (look maybe at fourier transform
+%to remove peaks that are not periodic).
