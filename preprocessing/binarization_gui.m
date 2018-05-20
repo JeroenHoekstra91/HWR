@@ -31,7 +31,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'otsu', 'line histogram'};
+    source_list = {'original','parchment only','sauvola', 'otsu', 'line histogram', 'line segmentation'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -163,7 +163,7 @@ function binarization_gui
                 O1 = imbinarize(P, graythresh(P))*255;
             case 'line histogram'
                 BW = binarization(P, sz, k, 'sauvola');
-                [~, O1] = line_histogram(I, BW);
+                [~, O1] = line_histogram(I, BW);                
         end
         switch src2
             case 'original'
