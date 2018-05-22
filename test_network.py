@@ -49,7 +49,7 @@ args = vars(ap.parse_args())
 
 # load the image
 image = cv2.imread(args["image"])
-orig = image.copy()
+orig = cv2.imread('black.png')
 
 # pre-process the image for classification
 image = cv2.resize(image, (28, 28))
@@ -82,11 +82,13 @@ label = char_map.keys()[char_map.values().index(argmax)]
 proba = prediction[argmax]
 label = "{}: {:.2f}%".format(label, proba * 100)
 
+print label;
+
 # draw the label on the image
-output = imutils.resize(orig, width=400)
-cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
-	0.7, (0, 255, 0), 2)
+# output = imutils.resize(orig, width=400)
+# cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
+# 	0.7, (0, 255, 0), 2)
 
 # show the output image
-cv2.imshow("Output", output)
-cv2.waitKey(0)
+# cv2.imshow("Output", output)
+# cv2.waitKey(0)
