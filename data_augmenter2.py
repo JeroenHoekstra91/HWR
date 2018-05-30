@@ -24,9 +24,9 @@ SALT_AND_PEPPER = 0
 GAUSSIAN_NOISE = 1
 SHEAR = 2
 
-MIN_STATE   = [0  , 0  , -10]
+MIN_STATE   = [0  , 0  , -5]
 INTERVAL    = [0.1, 0.1, 1]
-MAX_STATE   = [0.3, 0.3, 10]
+MAX_STATE   = [0.3, 0.3, 5]
 
 STATE = list(MIN_STATE)
 ORIGINAL_IMAGE = [0]*len(MIN_STATE)

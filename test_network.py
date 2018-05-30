@@ -2,20 +2,20 @@
 # python test_network.py --model santa_not_santa.model --image images/examples/santa_01.png
 
 # import the necessary packages
+
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 import numpy as np
 import argparse
-import imutils
 import cv2
 
 char_map = {
-    "Alef"  : 0,
-    "Ayin"  : 1,
-    "Bet"   : 2,
-    "Dalet" : 3,
-    "Gimel" : 4,
-    "He"    : 5,
+    "Alef": 0,
+    "Ayin": 1,
+    "Bet": 2,
+    "Dalet": 3,
+    "Gimel": 4,
+    "He": 5,
     "Het": 6,
     "Kaf": 7,
     "Kaf-final": 8,
@@ -49,7 +49,8 @@ args = vars(ap.parse_args())
 
 # load the image
 image = cv2.imread(args["image"])
-orig = cv2.imread('black.png')
+orig = image.copy()
+# orig = cv2.imread('black.png')
 
 # pre-process the image for classification
 image = cv2.resize(image, (28, 28))
@@ -67,13 +68,10 @@ results = {}
 
 for i in range(len(prediction)):
     label = sorted(char_map.keys())[i]
-    if prediction[i] in results.keys():
-        results[prediction[i]].append(label)
-    else:
-        results[prediction[i]] = [label]
+    results[prediction[i]] = [label]
 
-print("Prediction", sorted(prediction, reverse=True))
-print(results)
+for result in sorted(results.items(), reverse=True):
+    print result
 
 argmax = np.argmax(prediction)
 
