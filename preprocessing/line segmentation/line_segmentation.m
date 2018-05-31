@@ -11,7 +11,7 @@ function seg = line_segmentation(BW, R)
 %       L: cell array of segmented lines in R
 
     %Fuse background with parchment
-    BW = remove_CC(BW);
+    BW = remove_cc(BW);
     
     [H baselines gaps] = line_histogram2(BW);    
     
