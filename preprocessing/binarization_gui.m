@@ -36,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'otsu', 'after CC', 'line segmentation'};
+    source_list = {'original','parchment only','sauvola', 'otsu', 'after CC', 'baselines', 'line segmentation'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -221,16 +221,18 @@ function binarization_gui
                 lines = line_segmentation(BW, I);
                 O2 = lines_segmented_visualization(lines);
         end
-        if left_hoverlay
+        if left_hoverlay && ~ strcmp('line segmentation', src1)
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
-            H = line_histogram2(BW);
+            [H, baselines, gaps] = line_histogram2(BW);
+            O1 = visualize_baselines(O1, baselines, gaps);
             O1 = histogram_visualization(O1, H);
         end
-        if right_hoverlay
+        if right_hoverlay && ~ strcmp('line segmentation', src2)
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
-            H = line_histogram2(BW);
+            [H, baselines, gaps] = line_histogram2(BW);
+            O2 = visualize_baselines(O2, baselines, gaps);
             O2 = histogram_visualization(O2, H);
         end
         subplot(1,2,1);
