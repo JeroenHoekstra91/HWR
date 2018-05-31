@@ -11,27 +11,7 @@ function seg = line_segmentation(BW, R)
 %       L: cell array of segmented lines in R
 
     %Fuse background with parchment
-    CC = bwconncomp(~BW);
-
-    numPixels = cellfun(@numel,CC.PixelIdxList);
-    [biggest,idx] = max(numPixels);
-    BW(CC.PixelIdxList{idx}) = 1;
-
-    numPixels(idx) = []; %Remove background component
-    background = CC.PixelIdxList{idx};
-    CC.PixelIdxList(idx) = [];
-    CC.NumObjects = CC.NumObjects - 1;
-    S = std(numPixels);
-    mu = mean(numPixels);
-    
-    % Remove components that are further than 2stds from the mean
-    toRemove = abs(mu-numPixels) > S*2;
-    for i=1:length(toRemove) %for some reason we have to run the loop manually, cant pass the whole list to PixelIdxList
-        if toRemove(i)
-            toRemoveImg = CC.PixelIdxList{i};
-            BW(toRemoveImg) = 1;
-        end
-    end
+    BW = remove_CC(BW);
     
     [H baselines gaps] = line_histogram2(BW);    
     

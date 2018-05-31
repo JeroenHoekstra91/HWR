@@ -4,7 +4,7 @@ function BW = remove_cc(BW)
     CC = bwconncomp(~BW);
 
     numPixels = cellfun(@numel,CC.PixelIdxList);
-    [biggest,idx] = max(numPixels);
+    [~,idx] = max(numPixels);
     BW(CC.PixelIdxList{idx}) = 1;
 
     numPixels(idx) = []; %Remove background component
