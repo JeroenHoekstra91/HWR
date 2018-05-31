@@ -69,8 +69,10 @@ function r_final = p_segment( I_cur )
         max_c = max_c + 5;
     end 
     
-    % threshold image 
-    r_final = r(min_r:max_r,min_c:max_c);
+    % final masking to remove the connected palettes
+    r_final = uint8(zeros(row,col));
+    r_final(min_r:max_r,min_c:max_c) = 1;
+    r_final = r.*r_final;
     
 end
 
