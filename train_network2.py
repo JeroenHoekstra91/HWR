@@ -74,8 +74,8 @@ for imagePath in imagePaths:
     label = imagePath.split(os.path.sep)[-2]
     y_sample.append(char_map[label])
 
-(trainX, testX, trainY, testY) = train_test_split(imagePaths,
-                                                  y_sample, test_size=0.25, random_state=42)
+# (trainX, testX, trainY, testY) = train_test_split(imagePaths,
+#                                                   y_sample, test_size=0.25, random_state=42)
 
 X_sample = np.array(imagePaths)
 y_sample = np.array(y_sample)
