@@ -2,20 +2,18 @@ function P = dataset_parchment_segmentation(src)
 
 %     save_dir = '/Users/mario/Developer/HWR-data/results/parchment_segmentation';
     for i = 1:length(src)
-        I =src{i};
-
-        Is = p_segment(I);
-%         imwrite(Is, strcat(save_dir, num2str(i), 'slides-sw.png'));
-        Isr = imclose(Is, strel('square',60));
-%         imwrite(Isr, strcat(save_dir, num2str(i), 'close-to-remove-char.png'));
-        Isr2 = imreconstruct(~Isr, ~Is);
-%         imwrite(Isr2, strcat(save_dir, num2str(i), 'reconstruct-on-inverted-images.png'));
-        Isegmented = I;
-        Isegmented(Isr2) = 0;
-%         imwrite(Isegmented, strcat(save_dir, num2str(i), 'applying-segmentation.png'));
-%         P{i} = Isegmented;
-        
+        I = src{i};
+        Is = p_segment(I); 
         P{i} = Is;
+%         imwrite(Is, strcat(save_dir, num2str(i), 'slides-sw.png'));
+%        Isr = imclose(Is, strel('square',60));
+%         imwrite(Isr, strcat(save_dir, num2str(i), 'close-to-remove-char.png'));
+%        Isr2 = imreconstruct(~Isr, ~Is);
+%         imwrite(Isr2, strcat(save_dir, num2str(i), 'reconstruct-on-inverted-images.png'));
+%        Isegmented = I;
+%       Isegmented(Isr2) = 0;
+%         imwrite(Isegmented, strcat(save_dir, num2str(i), 'applying-segmentation.png'));
+%         P{i} = Isegmented; 
 %         Is = cast(Is, 'uint8');
 %         Is(Is == 1) = 255;
 %         P{i} = Is;
