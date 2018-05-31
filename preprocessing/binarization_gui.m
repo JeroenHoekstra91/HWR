@@ -6,10 +6,13 @@ function binarization_gui
     save_dir = '/Users/mario/Developer/HWR-data/results/';
     
     disp('Reading images...');
-    [imgs, ~] = read_images(data_dir);
+%     [imgs, ~] = read_images(data_dir);
+    load 'bw_images' 'bw';
+    imgs = bw;
     disp('Done');
     disp('Segmenting parchment...');
-    segm = dataset_parchment_segmentation(imgs);
+%     segm = dataset_parchment_segmentation(imgs);
+    load 'segmented_parchment';
     disp('Done');
     
     idx = 1;
@@ -163,7 +166,12 @@ function binarization_gui
                 O1 = imbinarize(P, graythresh(P))*255;
             case 'line histogram'
                 BW = binarization(P, sz, k, 'sauvola');
-                [~, O1] = line_histogram(I, BW);                
+                H = line_histogram2(BW);
+                O1 = histogram_visualization(I, H);
+            case 'line segmentation'
+                BW = binarization(P, sz, k, 'sauvola');
+                lines = line_segmentation(BW, I);
+                O1 = lines_segmented_visualization(lines);
         end
         switch src2
             case 'original'
@@ -176,7 +184,12 @@ function binarization_gui
                 O2 = imbinarize(P, graythresh(P))*255;
             case 'line histogram'
                 BW = binarization(P, sz, k, 'sauvola');
-                [~, O2] = line_histogram(P, BW);
+                H = line_histogram2(BW);
+                O2 = histogram_visualization(I, H);
+            case 'line segmentation'
+                BW = binarization(P, sz, k, 'sauvola');
+                lines = line_segmentation(BW, I);
+                O2 = lines_segmented_visualization(lines);
         end
         disp(class(O1));
         disp(class(O2));
@@ -186,6 +199,3 @@ function binarization_gui
         imshow(O2);        
     end
 end
-
-%TODO: -Implement histogram peak detection (look maybe at fourier transform
-%to remove peaks that are not periodic).

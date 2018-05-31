@@ -15,7 +15,7 @@ function O = histogram_visualization( I, H )
     O(1:size(I,1),1:size(I,2),1) = I;
     O(1:size(I,1),1:size(I,2),2) = I;
     O(1:size(I,1),1:size(I,2),3) = I;
-
+    H = int32(H);
     for i=1:size(O,1)
         O(i,size(O,2)-(H(i)-1):size(O,2),1) = 255;
         O(i,size(O,2)-(H(i)-1):size(O,2),2) = 0;

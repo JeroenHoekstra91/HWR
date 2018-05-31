@@ -5,7 +5,7 @@ load('bw_images');
 
 save_data_dir = '/Users/mario/Developer/HWR-data/results/line_segmentation/';
 
-I = bw{11};
+I = bw{12};
 R = p_segment(I);
 
 BW = binarization(p_segment(I), 121, 0.34, 'sauvola');
@@ -70,12 +70,12 @@ BW = binarization(p_segment(I), 121, 0.34, 'sauvola');
   figure;
   O = [];
   for i= 1:length(seg)
-      subplot(length(seg), 1, i)
+%       subplot(length(seg), 1, i)
       bin = binarization(seg{i},  2*floor(size(seg{i}, 1)/2)+1, 0.34, 'sauvola');
-      O = [O; bin];
-      imshow(bin);
+      O = uint8(double([O; ones(20, length(bin))*128; bin*255]));
+%       imshow(bin);
   end
-  
+  imshow(O)
  
 %% visualize baseline and gaps
 figure;
@@ -114,3 +114,11 @@ figure, plot(H);
 % plot(H, 'Color', 'b');
 hold on;
 plot(smoothedH, 'Color', 'r');
+
+
+
+%% TODO
+
+% [ ] Offset for line segmentation to capture the ascenders
+% [ ] Look at line segmentation results for all the lines
+% [ ] Fine tune sauvola for optimal results

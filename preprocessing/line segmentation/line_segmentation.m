@@ -33,23 +33,11 @@ function seg = line_segmentation(BW, R)
         end
     end
     
-    H = line_histogram2(BW);
-
-    H = double(H);
-
-    %smooth Histogram and find maxima
-    H = smooth_signal(H, 30);
-    [pks, baselines] = findpeaks(H,'MinPeakProminence',40);
-
-    x = [1:length(H)];
-
-    %minima
-    Hinv = H*-1;
-    [~, gaps] = findpeaks(Hinv,'MinPeakProminence',60);
+    [H baselines gaps] = line_histogram2(BW);    
     
     % Segment based on maxima,minima
     dists = pdist2(baselines, gaps);
-    seg = {}
+    seg = {length(baselines)};
     for bs = 1:length(baselines) %iterate through all lines
         [min_dist, loc] = sort(dists(bs, :)); %sort gaps by distance to baseline
         above = gaps < baselines(bs); %find all gaps above current baseline
