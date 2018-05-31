@@ -25,7 +25,9 @@ function binarization_gui
     src1 = 'original';
     src2 = 'parchment only';
     sz = 121;
-    k = 0.21;
+    k = 0.34;
+    left_hoverlay = false;
+    right_hoverlay = false;
     
     save_path = strcat(save_dir, 'gui/');
     
@@ -34,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'otsu', 'line histogram', 'line segmentation'};
+    source_list = {'original','parchment only','sauvola', 'otsu', 'after CC', 'line segmentation'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -56,6 +58,16 @@ function binarization_gui
     btn_prev = uicontrol('Style', 'pushbutton', 'String', 'previous image',...
     'Position', [20 20 80 20],...
     'Callback', @prev);       
+    
+    % Histogram overlay for left image
+    chk_hist_left = uicontrol('Style', 'checkbox', 'String', 'histogram overlay',...
+    'Position', [20 530 120 50],...
+    'Callback', @hist_overlay, 'Tag', 'hleft');       
+    
+    % Histogram overlay for right image
+    chk_hist_right = uicontrol('Style', 'checkbox', 'String', 'histogram overlay',...
+    'Position', [900 530 120 50],...
+    'Callback', @hist_overlay, 'Tag', 'hright');       
     
     % Save figures button
     btn_save = uicontrol('Style', 'pushbutton', 'String', 'save figures',...
@@ -97,6 +109,16 @@ function binarization_gui
             src1 = maps{val};
         else
             src2 = maps{val};
+        end
+        update;
+    end
+
+    function hist_overlay(source, event)
+        val = source.Value;
+        if strcmp(source.Tag, 'hleft')
+            left_hoverlay = val;
+        else
+            right_hoverlay = val;
         end
         update;
     end
@@ -164,8 +186,12 @@ function binarization_gui
                 O1 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
+            case 'after CC'
+                BW = binarization(P, sz, k, 'sauvola');
+                O1 = remove_cc(BW);
             case 'line histogram'
                 BW = binarization(P, sz, k, 'sauvola');
+                BW = remove_cc(BW);
                 H = line_histogram2(BW);
                 O1 = histogram_visualization(I, H);
             case 'line segmentation'
@@ -182,8 +208,12 @@ function binarization_gui
                 O2 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O2 = imbinarize(P, graythresh(P))*255;
+            case 'after CC'
+                BW = binarization(P, sz, k, 'sauvola');
+                O2 = remove_cc(BW);
             case 'line histogram'
                 BW = binarization(P, sz, k, 'sauvola');
+                BW = remove_cc(BW);
                 H = line_histogram2(BW);
                 O2 = histogram_visualization(I, H);
             case 'line segmentation'
@@ -191,8 +221,18 @@ function binarization_gui
                 lines = line_segmentation(BW, I);
                 O2 = lines_segmented_visualization(lines);
         end
-        disp(class(O1));
-        disp(class(O2));
+        if left_hoverlay
+            BW = binarization(P, sz, k, 'sauvola');
+            BW = remove_cc(BW);
+            H = line_histogram2(BW);
+            O1 = histogram_visualization(O1, H);
+        end
+        if right_hoverlay
+            BW = binarization(P, sz, k, 'sauvola');
+            BW = remove_cc(BW);
+            H = line_histogram2(BW);
+            O2 = histogram_visualization(O2, H);
+        end
         subplot(1,2,1);
         imshow(O1);
         subplot(1,2,2);

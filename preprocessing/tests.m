@@ -1,12 +1,14 @@
 %% line segmentation
 clear; clc; close all;
 
-load('bw_images');
+load bw_images.mat;
+load segmented_parchment.mat;
 
 save_data_dir = '/Users/mario/Developer/HWR-data/results/line_segmentation/';
 
 I = bw{12};
-R = p_segment(I);
+P = segm{12};
+% R = p_segment(I);
 
 BW = binarization(p_segment(I), 121, 0.34, 'sauvola');
 
@@ -90,30 +92,7 @@ x2 = repmat([1,size(I, 2)]', [1, length(gaps)]);
 y2 = [gaps,gaps]';
 plot(x2, y2, 'Color', 'r', 'LineWidth', 2);
 
-%% FFT
-% clc; close all;
-figure;
-Y = fft(H);
-Fs = 1;
-N = length(H);
-freqHz = (0:length(H)-1)*Fs/N;
-plot(freqHz, abs(Y), 'Color', 'b');
-hold on;
-Y2 = Y;
-Y2(length(Y2)/2:length(Y2)) = 0;
-plot(freqHz, abs(Y2), 'Color', 'r');
-
-Hclean = ifft(Y2);
-figure;
-plot(Hclean)
-figure, plot(H);
-
-
-%% Histogram smoothing
-
-% plot(H, 'Color', 'b');
-hold on;
-plot(smoothedH, 'Color', 'r');
+%% Solving histogram issue
 
 
 
