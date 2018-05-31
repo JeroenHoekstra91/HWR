@@ -2,14 +2,14 @@
 import datetime
 
 import matplotlib
-from keras.utils import to_categorical
-from sklearn.cross_validation import train_test_split
 
 matplotlib.use("Agg")
 
 # import the necessary packages
 from keras.optimizers import Adam
+from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import img_to_array
+from keras.utils import to_categorical
 from networks.lenet import LeNet
 import numpy as np
 import argparse
@@ -47,6 +47,8 @@ char_map = {
     "Zayin": 26,
 }
 
+print datetime.datetime.now().time()
+
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
 	help="path to input dataset")
@@ -60,6 +62,9 @@ BS = 32
 
 # load images
 print("[INFO] loading images...")
+trainData = []
+allLabel = []
+
 imagePaths = []
 random.seed(42)
 
@@ -68,32 +73,90 @@ for root, dirs, files in os.walk(args["dataset"]):
         imagePaths.append(os.path.join(root, name))
 
 random.shuffle(imagePaths)
-y_sample = []
 
 for imagePath in imagePaths:
     label = imagePath.split(os.path.sep)[-2]
-    y_sample.append(char_map[label])
+    allLabel.append(char_map[label])
 
-# (trainX, testX, trainY, testY) = train_test_split(imagePaths,
-#                                                   y_sample, test_size=0.25, random_state=42)
+(trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.25, random_state=42)
 
-X_sample = np.array(imagePaths)
-y_sample = np.array(y_sample)
-y_sample = to_categorical(y_sample, num_classes=27)
+print len(trainY), len(testY)
 
-def load_image(img_path, target_size=(28, 28)):
+#UNCOMMENT FOR FIT_GENERATOR()
+# trainLabel = []
+# for imagePath in trainX:
+#     label = imagePath.split(os.path.sep)[-2]
+#     trainLabel.append(char_map[label])
+#
+# trainLabel = np.array(trainLabel)
+# trainLabel = to_categorical(trainLabel, num_classes=27)
+# trainX = np.array(trainX)
+#
+# testData = []
+# testLabel = []
+# for imagePath in testX:
+#     image = cv2.imread(imagePath)
+#     image = cv2.resize(image, (28, 28))
+#     image = img_to_array(image)
+#     testData.append(image)
+#
+#     label = imagePath.split(os.path.sep)[-2]
+#     testLabel.append(char_map[label])
+#
+# testData = np.array(testData, dtype="float") / 255.0
+# testLabel = np.array(testLabel)
+# testLabel = to_categorical(testLabel, num_classes=27)
+# # testX = np.array(testX)
+
+# def load_image(img_path, target_size=(28, 28)):
+#     image = cv2.imread(imagePath)
+#     image = cv2.resize(image, target_size)
+#     return img_to_array(image) #converts image to numpy array
+#
+# def IMDB_WIKI(X_samples, y_samples, batch_size=100):
+#     while(True):
+#         batch_size = len(X_samples) / batch_size
+#         X_batches = np.split(X_samples, batch_size)
+#         y_batches = np.split(y_samples, batch_size)
+#         for b in range(len(X_batches)):
+#             x = np.array(map(load_image, X_batches[b]),dtype="float") / 255.0
+#             y = np.array(y_batches[b])
+#             yield x, y
+#             # yield X_batches[b], y_batches[b]
+# UNCOMMENT FOR FIT_GENERATOR()
+
+# UNCOMMENT FOR FIT()
+trainLabel = []
+for imagePath in trainX:
+    # load the image, pre-process it, and store it in the data list
     image = cv2.imread(imagePath)
-    image = cv2.resize(image, target_size)
-    return img_to_array(image) #converts image to numpy array
+    image = cv2.resize(image, (28, 28))
+    image = img_to_array(image)
+    trainData.append(image)
 
-def IMDB_WIKI(X_samples, y_samples, batch_size=100):
-    batch_size = len(X_samples) / batch_size
-    X_batches = np.split(X_samples, batch_size)
-    y_batches = np.split(y_samples, batch_size)
-    for b in range(len(X_batches)):
-        x = np.array(map(load_image, X_batches[b]),dtype="float") / 255.0
-        y = np.array(y_batches[b])
-        yield x, y
+    label = imagePath.split(os.path.sep)[-2]
+    trainLabel.append(char_map[label])
+
+trainData = np.array(trainData, dtype="float") / 255.0
+trainLabel = np.array(trainLabel)
+trainLabel = to_categorical(trainLabel, num_classes=27)
+
+testData = []
+testLabel = []
+for imagePath in testX:
+    # load the image, pre-process it, and store it in the data list
+    image = cv2.imread(imagePath)
+    image = cv2.resize(image, (28, 28))
+    image = img_to_array(image)
+    testData.append(image)
+
+    label = imagePath.split(os.path.sep)[-2]
+    testLabel.append(char_map[label])
+
+testData = np.array(testData, dtype="float") / 255.0
+testLabel = np.array(testLabel)
+testLabel = to_categorical(testLabel, num_classes=27)
+# UNCOMMENT FOR FIT()
 
 # initialize the model
 print("[INFO] compiling model...")
@@ -104,11 +167,28 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 
 # train the network
 print("[INFO] training network...")
-generator = IMDB_WIKI(X_sample, y_sample, batch_size=176)
-model.fit_generator(generator, epochs=1, steps_per_epoch=10, verbose=1)
+# generator = IMDB_WIKI(trainX, trainLabel, batch_size=16)
+# model.fit_generator(generator, validation_data=(testData, testLabel), epochs=100,
+#                     steps_per_epoch=1, verbose=1, use_multiprocessing=True)
+model.fit(trainData, trainLabel, validation_data=(testData, testLabel), epochs=5, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")
 model.save(args["model"])
 
 print datetime.datetime.now().time()
+
+
+
+
+
+
+
+
+
+
+
+
+# valgenerator = IMDB_WIKI(testX, testLabel, batch_size=1864)
+# model.fit_generator(generator, validation_data=valgenerator, validation_steps=8, epochs=1,
+#                     steps_per_epoch=8, verbose=1, use_multiprocessing=True)

@@ -86,5 +86,5 @@ print("Total loss: %i" % (loss))
 print("Accuracy: " + str(100 - loss/len(imagePaths)*100) + "%")
 print("Loss:" + str(loss/len(imagePaths)*100) + "%")
 
-print("\nConfusion Map:")
-print(confusionmap)
+# print("\nConfusion Map:")
+# print(confusionmap)
