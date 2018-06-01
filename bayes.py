@@ -1,5 +1,11 @@
 import pickle
 
+"""
+PFC	= the probability of a feature occuring given a class
+PC	= the probability of a class occuring
+PF	= the probability of a feature occuring
+"""
+
 class Bayes(object):
 	def __init__(self):
 		self.pfc_map = {} 			# for PFC
@@ -19,8 +25,8 @@ class Bayes(object):
 			self._update_pc(record)
 			self._update_pf(record)
 
-	# Both feature and klass are parameters of type String
-	def classify(self, feature, klass):
+	# Both klass and feature are parameters of type String
+	def classify(self, klass, feature):
 		try:
 			pfc = self._pfc(feature, klass)
 			pc = self._pc(klass)
@@ -32,12 +38,12 @@ class Bayes(object):
 
 	# Saves a serialized version of the classifier
 	def serialize(self, file):
-		return pickle.dump(self, open(file, "wb"))
+		return pickle.dump(self, open(file, 'wb'))
 
 	# Loads a (pre-trained) serialized classifier
 	@staticmethod
 	def load(file):
-		return pickle.load(open(file, "rb"))
+		return pickle.load(open(file, 'rb'))
 
 	### PRIVATE METHODS ###
 
