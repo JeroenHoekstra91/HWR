@@ -91,8 +91,6 @@ print("Accuracy: " + str(100 - loss/len(imagePaths)*100) + "%")
 print("Loss:" + str(loss/len(imagePaths)*100) + "%")
 
 # Write confusion map to excel sheet
-min_confusion = confusionmap.min()
-max_confusion = confusionmap.max()
 confusion_color = "0011FF"
 
 workbook = Workbook()
@@ -109,12 +107,15 @@ for i in range(27):
     cell.alignment=Alignment(text_rotation=90, horizontal='center')
     sheet.cell(column=1, row=i+2, value=sorted(char_map.keys())[i])
 
+    min_confusion = confusionmap[i][0:27].min()
+    max_confusion = confusionmap[i][0:27].max()
     # write cell values
     for j in range(27):
         col = j + 2
         row = i + 2
         value = confusionmap[i][j]
         confusion = value / (max_confusion - min_confusion * 1.0) 
+        
         rgb = colorsys.hsv_to_rgb(hsv[0], confusion, hsv[2])
         color = str(format(int(rgb[0]*255), '02X')) + str(format(int(rgb[1]*255), '02X')) + str(format(int(rgb[2]*255), '02X'))
         
