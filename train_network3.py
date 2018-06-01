@@ -58,7 +58,7 @@ args = vars(ap.parse_args())
 
 EPOCHS = 5
 INIT_LR = 1e-3
-BS = 5592
+BS = 60587
 
 # load images
 print("[INFO] loading images...")
@@ -78,7 +78,7 @@ for imagePath in imagePaths:
     label = imagePath.split(os.path.sep)[-2]
     allLabel.append(char_map[label])
 
-(trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.25, random_state=42)
+(trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.10, random_state=42)
 
 print len(trainY), len(testY)
 
@@ -134,8 +134,10 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 print("[INFO] training network...")
 
 for i in range(len(trainX)/BS):
-    model.fit(get_train_data(i), get_train_label(i), validation_data=(testData, testLabel), initial_epoch=i,
-              epochs=i+1, verbose=1)
+    # model.fit(get_train_data(i), get_train_label(i), validation_data=(testData, testLabel), initial_epoch=i,
+    #           epochs=i+1, verbose=1)
+    model.fit(get_train_data(i), get_train_label(i), initial_epoch=i,
+              epochs=i + 1, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")
