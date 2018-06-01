@@ -4,6 +4,9 @@ import cv2
 import numpy as np
 import argparse
 import os
+from openpyxl import *
+from openpyxl.styles import *
+import colorsys
 
 char_map = {
     "Alef": 0,
@@ -73,18 +76,63 @@ for i in range(len(imagePaths)):
 	prediction = list(model.predict(image)[0])
 	argmax = np.argmax(prediction)
 	predicted_label = char_map.keys()[char_map.values().index(argmax)]
-
-	print("Should be: %s -> Predicted: %s" % (labels[i], predicted_label))
-
 	confusionmap[char_map[labels[i]], argmax] += 1
 
-	if not predicted_label == labels[i]:
+	if predicted_label != labels[i]:
 		loss = loss + 1
+		print("Should be: %s -> Predicted: %s" % (labels[i], predicted_label))
+
+print("\nConfusion Map:")
+print(confusionmap)
 
 print("\nSample size: %i" % (len(imagePaths)))
 print("Total loss: %i" % (loss))
 print("Accuracy: " + str(100 - loss/len(imagePaths)*100) + "%")
 print("Loss:" + str(loss/len(imagePaths)*100) + "%")
 
-# print("\nConfusion Map:")
-# print(confusionmap)
+# Write confusion map to excel sheet
+min_confusion = confusionmap.min()
+max_confusion = confusionmap.max()
+confusion_color = "0011FF"
+
+workbook = Workbook()
+sheet = workbook.active
+sheet.title = "Confusion Map"
+hsv = colorsys.rgb_to_hsv(
+    int(confusion_color[0:2], 16)/255.0,
+    int(confusion_color[2:4], 16)/255.0,
+    int(confusion_color[4:6], 16)/255.0)
+
+for i in range(27):
+    # Write labels
+    cell = sheet.cell(column=i+2, row=1, value=sorted(char_map.keys())[i])
+    cell.alignment=Alignment(text_rotation=90, horizontal='center')
+    sheet.cell(column=1, row=i+2, value=sorted(char_map.keys())[i])
+
+    # write cell values
+    for j in range(27):
+        col = j + 2
+        row = i + 2
+        value = confusionmap[i][j]
+        confusion = value / (max_confusion - min_confusion * 1.0) 
+        rgb = colorsys.hsv_to_rgb(hsv[0], confusion, hsv[2])
+        color = str(format(int(rgb[0]*255), '02X')) + str(format(int(rgb[1]*255), '02X')) + str(format(int(rgb[2]*255), '02X'))
+        
+        cell = sheet.cell(column=col, row=row, value=value)
+        cell.fill = PatternFill(fgColor=color, fill_type="solid")
+
+sheet.cell(column=1, row=1, value="real/predicted")
+
+sheet.cell(column=1, row=30, value="Sample size:").font = Font(bold=True)
+sheet.cell(column=3, row=30, value=str(len(imagePaths))).font = Font(bold=True)
+
+sheet.cell(column=1, row=31, value="Total loss:").font = Font(bold=True)
+sheet.cell(column=3, row=31, value=str(int(loss))).font = Font(bold=True)
+
+sheet.cell(column=1, row=32, value="Accuracy:").font = Font(bold=True)
+sheet.cell(column=3, row=32, value=str(100 - loss/len(imagePaths)*100) + "%").font = Font(bold=True)
+
+sheet.cell(column=1, row=33, value="Loss:").font = Font(bold=True)
+sheet.cell(column=3, row=33, value=str(loss/len(imagePaths)*100) + "%").font = Font(bold=True)
+
+workbook.save(filename = "confusionmap.xlsx")
