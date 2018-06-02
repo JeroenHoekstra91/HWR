@@ -3,9 +3,9 @@ function O = to_rgb(I)
 %   Detailed explanation goes here
 %cast to uint8 and make sure the color range is from 0 to 255
     if isa(I, 'logical')
-        I = uint8(I)*255
+        I = uint8(I)*255;
     elseif ~isa(I, 'uint8')
-        I = uint8(I)
+        I = uint8(I);
     end
     
     %make sure the matrix is rgb

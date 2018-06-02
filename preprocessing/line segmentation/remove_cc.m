@@ -8,7 +8,7 @@ function BW = remove_cc(BW)
     BW(CC.PixelIdxList{idx}) = 1;
 
     numPixels(idx) = []; %Remove background component
-    background = CC.PixelIdxList{idx};
+%     background = CC.PixelIdxList{idx};
     CC.PixelIdxList(idx) = [];
     CC.NumObjects = CC.NumObjects - 1;
     S = std(numPixels);

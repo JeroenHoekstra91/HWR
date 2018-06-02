@@ -36,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'otsu', 'after CC', 'baselines', 'line segmentation'};
+    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'after CC', 'line segmentation'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -184,6 +184,9 @@ function binarization_gui
                 O1 = P;
             case 'sauvola'
                 O1 = binarization(P, sz, k, 'sauvola')*255;
+            case 'median filter'
+                P = medfilt2(P, [7 7]);
+                O1 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
             case 'after CC'
@@ -196,7 +199,7 @@ function binarization_gui
                 O1 = histogram_visualization(I, H);
             case 'line segmentation'
                 BW = binarization(P, sz, k, 'sauvola');
-                lines = line_segmentation(BW, I);
+                lines = line_segmentation2  (BW, I);
                 O1 = lines_segmented_visualization(lines);
         end
         switch src2
@@ -205,6 +208,9 @@ function binarization_gui
             case 'parchment only'
                 O2 = P;
             case 'sauvola'
+                O2 = binarization(P, sz, k, 'sauvola')*255;
+            case 'median filter'
+                P = medfilt2(P, [7 7]);
                 O2 = binarization(P, sz, k, 'sauvola')*255;
             case 'otsu'
                 O2 = imbinarize(P, graythresh(P))*255;
@@ -218,7 +224,7 @@ function binarization_gui
                 O2 = histogram_visualization(I, H);
             case 'line segmentation'
                 BW = binarization(P, sz, k, 'sauvola');
-                lines = line_segmentation(BW, I);
+                lines = line_segmentation2(BW, I);
                 O2 = lines_segmented_visualization(lines);
         end
         if left_hoverlay && ~ strcmp('line segmentation', src1)
