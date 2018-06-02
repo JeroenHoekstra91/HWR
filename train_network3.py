@@ -58,7 +58,6 @@ args = vars(ap.parse_args())
 
 EPOCHS = 5
 INIT_LR = 1e-3
-BS = 60587
 
 # load images
 print("[INFO] loading images...")
@@ -81,22 +80,28 @@ for imagePath in imagePaths:
 (trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.10, random_state=42)
 
 print len(trainY), len(testY)
+for i in range(5,50):
+    if len(trainX) % i == 0 and len(trainX) / i <= 80000:
+        print i
+        BS = len(trainX) / i
+        print BS
+        break
 
-testData = []
-testLabel = []
-for imagePath in testX:
-    # load the image, pre-process it, and store it in the data list
-    image = cv2.imread(imagePath)
-    image = cv2.resize(image, (28, 28))
-    image = img_to_array(image)
-    testData.append(image)
-
-    label = imagePath.split(os.path.sep)[-2]
-    testLabel.append(char_map[label])
-
-testData = np.array(testData, dtype="float") / 255.0
-testLabel = np.array(testLabel)
-testLabel = to_categorical(testLabel, num_classes=27)
+# testData = []
+# testLabel = []
+# for imagePath in testX:
+#     # load the image, pre-process it, and store it in the data list
+#     image = cv2.imread(imagePath)
+#     image = cv2.resize(image, (28, 28))
+#     image = img_to_array(image)
+#     testData.append(image)
+#
+#     label = imagePath.split(os.path.sep)[-2]
+#     testLabel.append(char_map[label])
+#
+# testData = np.array(testData, dtype="float") / 255.0
+# testLabel = np.array(testLabel)
+# testLabel = to_categorical(testLabel, num_classes=27)
 
 
 def get_train_data(STEP):
