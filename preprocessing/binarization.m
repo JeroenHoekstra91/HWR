@@ -1,6 +1,6 @@
 function bw = binarization(I, sz, k, method)
 
-I_ = double(I);
+    I_ = double(I);
     
     assert(mod(sz,2) ~= 0, 'sz must be odd');
     assert(sz > 2, 'sz must be 3 or greater');
@@ -21,5 +21,6 @@ I_ = double(I);
     T = cast(T, class(I));
     
     bw = I > T;    
+    bw = medfilt2(bw, [7 7]);
 
 end

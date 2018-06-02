@@ -15,7 +15,7 @@ function BW = remove_cc(BW)
     mu = mean(numPixels);
     
     % Remove components that are further than 2stds from the mean
-    toRemove = abs(mu-numPixels) > S*2;
+    toRemove = abs(mu-numPixels) > S*2.5;
     for i=1:length(toRemove) %for some reason we have to run the loop manually, cant pass the whole list to PixelIdxList
         if toRemove(i)
             toRemoveImg = CC.PixelIdxList{i};
