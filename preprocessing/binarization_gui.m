@@ -54,6 +54,10 @@ function binarization_gui
     'Position', [120 20 60 20],...
     'Callback', @next);       
     
+    fig_txt = uicontrol('Style','text',...
+        'Position',[200 20 60 20],...
+        'String',strcat('figure id: ',num2str(idx)));
+
     % Previous image button
     btn_prev = uicontrol('Style', 'pushbutton', 'String', 'previous image',...
     'Position', [20 20 80 20],...
@@ -71,13 +75,13 @@ function binarization_gui
     
     % Save figures button
     btn_save = uicontrol('Style', 'pushbutton', 'String', 'save figures',...
-    'Position', [850 20 60 20],...
+    'Position', [950 20 60 20],...
     'Callback', @save);       
 
     % k slider label  
-    txt = uicontrol('Style','text',...
+    k_txt = uicontrol('Style','text',...
     'Position',[300 20 120 20],...
-    'String','k parameter');
+    'String',strcat('k parameter: ',num2str(k)));
 
     % k slider
     sld_k = uicontrol('Style', 'slider',...
@@ -86,14 +90,14 @@ function binarization_gui
     'Callback', @setk); 
     
     % sz slider label
-    txt = uicontrol('Style','text',...
-    'Position',[600 20 120 20],...
-    'String','Binarization window size');
+    sz_txt = uicontrol('Style','text',...
+    'Position',[600 20 200 20],...
+    'String',strcat('Binarization window size: ', num2str(sz)));
     
     % sz slider
     sld_sz = uicontrol('Style', 'slider',...
     'Min',10,'Max',300,'Value',121,...
-    'Position', [720 20 120 20],...
+    'Position', [790 20 130 20],...
     'Callback', @setsz); 
 
     % Make figure visble after adding all components
@@ -130,6 +134,7 @@ function binarization_gui
             P = segm{idx};
             update;
         end
+        fig_txt.String = strcat('figure id: ', num2str(idx));
     end
 
     function prev(source, event)
@@ -139,6 +144,7 @@ function binarization_gui
             P = segm{idx};
             update;
         end
+        fig_txt.String = strcat('figure id: ', num2str(idx));
     end
 
     function save(source, event)
@@ -167,12 +173,15 @@ function binarization_gui
     end
 
     function setk(source, event)
-        k = source.Value
+        k = source.Value;
+        k_txt.String = strcat('k parameter: ', num2str(k));
+%         set(k_txt.statictext, 'String', strcat('Binarization window size: ', num2str(sz)));
         update;
     end
 
     function setsz(source, event)
         sz = 2*floor(source.Value/2)+1;
+        sz_txt.String = strcat('Binarization window size: ', num2str(sz));
         update;
     end
 
@@ -185,8 +194,8 @@ function binarization_gui
             case 'sauvola'
                 O1 = binarization(P, sz, k, 'sauvola')*255;
             case 'median filter'
-                P = medfilt2(P, [7 7]);
-                O1 = binarization(P, sz, k, 'sauvola')*255;
+                med = medfilt2(P, [7 7]);
+                O1 = binarization(med, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
             case 'after CC'
@@ -210,8 +219,8 @@ function binarization_gui
             case 'sauvola'
                 O2 = binarization(P, sz, k, 'sauvola')*255;
             case 'median filter'
-                P = medfilt2(P, [7 7]);
-                O2 = binarization(P, sz, k, 'sauvola')*255;
+                med = medfilt2(P, [7 7]);
+                O2 = binarization(med, sz, k, 'sauvola')*255;
             case 'otsu'
                 O2 = imbinarize(P, graythresh(P))*255;
             case 'after CC'
