@@ -1,13 +1,15 @@
 function [ H, baselines, gaps ] = line_histogram2( BW )
 % LINE_HISTOGRAM2 Compute the number of black pixels per row
 %
-%       H = line_segmentation(BW)
+%       [ H, baselines, gaps ] = line_segmentation(BW)
 %
 %       INPUT
 %       BW: Binary image (logical class).
 %
 %       OUTPUT
 %       H: counts per row
+%       baselines: rows of the maxima
+%       gaps: rows of the minima
 
     H = size(BW,2) - sum(BW, 2);
     

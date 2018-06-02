@@ -240,12 +240,19 @@ function binarization_gui
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
             [H, baselines, gaps] = line_histogram2(BW);
+%             [H, baselines, gaps] = line_histogram2(O1);
             O1 = visualize_baselines(O1, baselines, gaps);
             O1 = histogram_visualization(O1, H);
         end
         if right_hoverlay && ~ strcmp('line segmentation', src2)
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
+            
+            ver = strel('rectangle', [7 1]);
+            hor = strel('rectangle', [1 15]);
+            BW = imdilate(~BW, hor);
+            BW = imerode(BW, ver);
+            BW = ~BW;
             [H, baselines, gaps] = line_histogram2(BW);
             O2 = visualize_baselines(O2, baselines, gaps);
             O2 = histogram_visualization(O2, H);
