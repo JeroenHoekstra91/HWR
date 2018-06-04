@@ -77,11 +77,14 @@ for imagePath in imagePaths:
     label = imagePath.split(os.path.sep)[-2]
     allLabel.append(char_map[label])
 
-(trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.10, random_state=42)
+# (trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.10, random_state=42)
 
-print len(trainY), len(testY)
-for i in range(5,50):
-    if len(trainX) % i == 0 and len(trainX) / i <= 80000:
+trainX = imagePaths
+trainY = allLabel
+
+# print len(trainY), len(testY)
+for i in range(1,90):
+    if len(trainX) % i == 0 and len(trainX) / i <= 100000:
         print i
         BS = len(trainX) / i
         print BS
