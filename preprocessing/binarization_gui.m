@@ -36,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'after CC', 'line segmentation'};
+    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'adaptive', 'after CC', 'line segmentation'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -192,12 +192,14 @@ function binarization_gui
             case 'parchment only'
                 O1 = P;
             case 'sauvola'
-                O1 = binarization(P, sz, k, 'sauvola')*255;
+                O1 = binarization(P, sz, k, 'niblack')*255;
             case 'median filter'
                 med = medfilt2(P, [7 7]);
                 O1 = binarization(med, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
+            case 'adaptive'
+                O1 = imbinarize(P, 'adaptive')*255;
             case 'after CC'
                 BW = binarization(P, sz, k, 'sauvola');
                 O1 = remove_cc(BW);

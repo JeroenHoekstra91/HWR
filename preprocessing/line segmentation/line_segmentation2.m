@@ -13,6 +13,23 @@ function seg = line_segmentation2(BW, R)
     %Fuse background with parchment
     BW = remove_cc(BW);
     
+    % Select orientation that will maximise the histogram peak height
+    best_score = 0;
+    best_orientation = Inf;
+    for a = -10:2:10
+        BW2 = imrotate(~BW, a, 'nearest', 'crop'); %image is inverted so that background added from rotation is the same
+        [H, baselines, ~] = line_histogram2(~BW2); %reinvert the image to get black chars
+
+        total_peaks = sum(H(baselines));
+        if total_peaks > best_score
+            best_score = total_peaks;
+            best_orientation = a;
+        end
+    end
+    BW = imrotate(~BW, best_orientation, 'nearest', 'crop');
+    R = imrotate(R, best_orientation, 'nearest', 'crop');
+    BW = ~BW;
+    
     [~, baselines, ~] = line_histogram2(BW);    
     assert(length(baselines) >= 2);
     
@@ -21,20 +38,6 @@ function seg = line_segmentation2(BW, R)
     % Segment based on baseline
     for i = 1:length(baselines)
         l = baselines(i);
-%         if i == 1 %first baseline -> above and below threshold are equidistant
-%             d = floor((baselines(i+1) - l)/2); %Threshold distance
-%             upper_bound = max(1, l-d); %higher bound, as you look at the image (not by index)
-%             lower_bound = min(size(BW, 1), l+d);
-%         elseif i == length(baselines) %last baseline -> above and below threshold are equidistant
-%             d = floor((l - baselines(i-1))/2);
-%             upper_bound = max(1, l-d);
-%             lower_bound = min(size(BW, 1), l+d);
-%         else %mid baseline
-%             d = floor((l - baselines(i-1))/2); % Upper threshold distance
-%             upper_bound = max(1, l-d);
-%             d = floor((baselines(i+1) - l)/2); % Lower threshold distance
-%             lower_bound = min(size(BW, 1), l+d);
-%         end
         
         % Reconstruction for including the ascenders (but no the 'descenders')
         upper_bound = max(1, l-10);
