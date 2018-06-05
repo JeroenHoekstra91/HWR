@@ -8,7 +8,10 @@
 
     % get the images and the segmented parchments
     [imgs, ~] = read_images(data_dir);
-    parchment_only = dataset_parchment_segmentation(imgs);
+    parchment_only = [];
+    for i = 1:length(imgs)
+        parchment_only{i} = p_segment(imgs{i});
+    end
     
 
     for i = 1:size(parchment_only,2)
