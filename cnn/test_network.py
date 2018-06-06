@@ -81,10 +81,8 @@ argmax = np.argmax(prediction)
 # build the label
 label = char_map.keys()[char_map.values().index(argmax)]
 proba = prediction[argmax]
-label = "{}: {:.2f}%".format(label, proba * 100)
-
-print label
-print total
+print "{}: {:.2f}p".format(label, proba * 100)
+print "Total: {:.2f}p".format(total*100)
 
 # draw the label on the image
 # output = imutils.resize(orig, width=400)
