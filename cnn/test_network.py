@@ -68,7 +68,10 @@ results = {}
 
 for i in range(len(prediction)):
     label = sorted(char_map.keys())[i]
-    results[prediction[i]] = [label]
+    if prediction[i] in results.keys():
+        results[prediction[i]].append(label)
+    else:
+        results[prediction[i]] = [label]
 
 for result in sorted(results.items(), reverse=True):
     print result
