@@ -35,7 +35,7 @@ class LeNet:
 
          # softmax classifier
          model.add(Dense(classes))
-         model.add(Activation("softmax"))
+         model.add(Activation("sigmoid"))
 
          # # if a weights path is supplied (inicating that the model was
          # # pre-trained), then load the weights

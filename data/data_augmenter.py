@@ -21,12 +21,13 @@ for root, dirs, files in os.walk(args["dataset"]):
 # ----------------------------------
 # State indices
 SALT_AND_PEPPER = 0
-GAUSSIAN_NOISE = 1
+# GAUSSIAN_NOISE = 1
+ROTATE = 1
 SHEAR = 2
 
-MIN_STATE   = [0  , 0  , -5]
-INTERVAL    = [0.1, 0.1, 1]
-MAX_STATE   = [0.3, 0.3, 5]
+MIN_STATE   = [0  , -90  , -10]
+INTERVAL    = [0.1, 10, 5]
+MAX_STATE   = [0.8, 90, 10]
 
 STATE = list(MIN_STATE)
 ORIGINAL_IMAGE = [0]*len(MIN_STATE)
@@ -53,15 +54,19 @@ for imagePath in imagePaths:
             continue
 
         seq = iaa.Sequential([
-            iaa.Affine(shear=(STATE[SHEAR]),
+            iaa.Affine(shear=(STATE[SHEAR]), rotate=(STATE[ROTATE]),
                        cval=(255)),
-            iaa.AdditiveGaussianNoise(scale=255*STATE[GAUSSIAN_NOISE]),
-            iaa.SaltAndPepper(p=STATE[SALT_AND_PEPPER])
+            # iaa.AdditiveGaussianNoise(scale=255*STATE[GAUSSIAN_NOISE]),
+            iaa.Invert(1),
+            iaa.CoarseDropout((0.0, 0.20), size_percent=(0.02, 0.25)),
+            iaa.CoarseDropout(STATE[SALT_AND_PEPPER], size_percent=(0.50)),
+            iaa.Invert(1),
+            # iaa.Salt(p=STATE[SALT_AND_PEPPER])
         ])
 
         images_aug = seq.augment_image(image)
 
-        cv2.imwrite(os.path.split(imagePath)[0]+"/Augmented"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[GAUSSIAN_NOISE])+
+        cv2.imwrite(os.path.split(imagePath)[0]+"/Augmented"+str(j)+"-S"+str(STATE[SHEAR])+"-GN"+str(STATE[ROTATE])+
                     "-SP"+str(STATE[SALT_AND_PEPPER])+".png", images_aug)
 
         state = numpy.around(STATE, decimals=1)
