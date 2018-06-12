@@ -3,10 +3,10 @@ import cv2
 from cnn.cnn import CNN
 
 transcript = []
-cnn = CNN('cnn/ModelTrainedOnAugmentedData.model')
+cnn = CNN('cnn/ModelTrainedWithNoise.model')
 file = open("output.txt", "w")
 
-def analyze_word_segment(word_segment, window_size=28, step_size=1, visualize=False):
+def analyze_word_segment(word_segment, window_size=50, step_size=2, visualize=False):
     segment_height = len(word_segment)
     segment_width = len(word_segment[0])
 
@@ -18,7 +18,6 @@ def analyze_word_segment(word_segment, window_size=28, step_size=1, visualize=Fa
     y_iterations = int(np.ceil((segment_height - window_size) / (step_size * 1.0)))
 
     confidence_map = np.zeros_like(word_segment)
-    file = open("output.txt", "a")
 
     # Slide window and analyze the character
     for i in range(y_iterations):
@@ -29,6 +28,7 @@ def analyze_word_segment(word_segment, window_size=28, step_size=1, visualize=Fa
             window_x += step_size
         window_x = 0
         window_y += step_size
+        file.write("\n")
 
     file.close()
 
