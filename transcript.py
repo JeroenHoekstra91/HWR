@@ -45,8 +45,8 @@ def analyze_character(window, visualize=False):
     if visualize:
         cv2.imshow("Test", window)
         cv2.waitKey(100)
-    else:
-        total, results = cnn.analyze_character(window)
-        results = sorted(results.items(), reverse=True)[:topN]
-        # perhaps threshold on total score?
-        return results
+        
+    total, results = cnn.analyze_character(window)
+    results = sorted(results.items(), reverse=True)[:topN]
+    # perhaps threshold on total score?
+    return results
