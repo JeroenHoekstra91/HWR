@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import savgol_filter
 
 def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001):
-	gradient = _compute_gradient(matrix)
+	gradient = compute_gradient(matrix)
 	extrema = []
 
 	max_y, max_x = np.where(gradient <= peak_estimation_threshold)
@@ -23,13 +23,15 @@ def filter_extrema(extrema, character_map):
 def smooth(matrix, rounds=5):
 	smoothed = matrix.copy()
 	for _ in range(rounds):
-		smoothed = savgol_filter(smoothed,5,2)
-		smoothed = savgol_filter(smoothed,5,2, axis=0)
+		try: smoothed = savgol_filter(smoothed,5,2)
+		except: pass
+		try: smoothed = savgol_filter(smoothed,5,2, axis=0)
+		except: pass
 	return smoothed
 
 #### HELPER FUNCTIONS ####
 
-def _compute_gradient(matrix):
+def compute_gradient(matrix):
 	nabla = np.gradient(matrix)
 	dy = np.abs(nabla[0])
 	dx = np.abs(nabla[1])

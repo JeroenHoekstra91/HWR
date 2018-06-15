@@ -86,7 +86,7 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 		window_groups.append(group)
 	return window_groups
 
-def filter_window_groups(window_groups, window_size=50):
+def filter_window_groups(window_groups, window_size=50, min_character_distance=25):
 	remove = []
 	for group1 in window_groups:
 		if group1 in remove:
@@ -98,7 +98,7 @@ def filter_window_groups(window_groups, window_size=50):
 			center1 = _get_window_group_center(group1)
 			center2 = _get_window_group_center(group2)
 
-			if _distance(0, center1[1], 0, center2[1]) < window_size/2:
+			if _distance(0, center1[1], 0, center2[1]) < min_character_distance:
 				if len(group1) > len(group2):
 					remove.append(group2)
 				else:
