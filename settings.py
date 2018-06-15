@@ -3,6 +3,9 @@ cnn_model = "cnn/models/ModelTrainedWithNoise.model"
 topN = 3									# Use the top N character predictions
 image_file = "data/words/EDITED.png"
 
+#### N-GRAM SETTINGS ####
+bayesian_model = "ngrams/models/bayes_classifier.p"
+
 #### SLIDING WINDOW SETTINGS ####
 window_size = 50
 step_size = 1

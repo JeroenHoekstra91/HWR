@@ -1,7 +1,7 @@
 ccopy_reg
 _reconstructor
 p0
-(cbayes
+(cngrams.bayes
 Bayes
 p1
 c__builtin__
