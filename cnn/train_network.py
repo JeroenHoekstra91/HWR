@@ -1,6 +1,5 @@
 # set the matplotlib backend so figures can be saved in the background
 import datetime
-
 import matplotlib
 
 matplotlib.use("Agg")
@@ -33,7 +32,6 @@ INIT_LR = 1e-3
 
 # load images
 print("[INFO] loading images...")
-# trainData = []
 allLabel = []
 
 imagePaths = []
@@ -51,10 +49,6 @@ for imagePath in imagePaths:
 
 (trainX, testX, trainY, testY) = train_test_split(imagePaths, allLabel, test_size=0.10, random_state=42)
 
-# trainX = imagePaths
-# trainY = allLabel
-
-# print len(trainY), len(testY)
 for i in range(1,90):
     if len(trainX) % i == 0 and len(trainX) / i <= 100000:
         print i
@@ -116,8 +110,6 @@ print("[INFO] training network...")
 for i in range(len(trainX)/BS):
     model.fit(get_train_data(i), get_train_label(i), validation_data=(testData, testLabel), initial_epoch=i,
               epochs=5, verbose=1)
-    # model.fit(get_train_data(i), get_train_label(i), initial_epoch=i,
-    #           epochs=i + 1, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")

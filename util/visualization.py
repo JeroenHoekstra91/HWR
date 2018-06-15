@@ -24,7 +24,7 @@ def print_character_confidence(extrema, confidence_map, character_map):
 		print "\tavg: " + str(np.average(d[key]))
 		print "\tmin: " + str(np.min(d[key]))
 		print "\tmax: " + str(np.max(d[key]))
-		print "\tcount: " + str(len(d[key]))
+		print "\tcount: " + str(len(d[key])) + " instances"
 
 #### HELPER FUNCTIONS ####
 
