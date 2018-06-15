@@ -39,13 +39,16 @@ def smooth(matrix, rounds=5):
 		smoothed = savgol_filter(smoothed,5,2, axis=0)
 	return smoothed
 
-def get_local_extrema(matrix, threshold=0, peak_estimation_threshold=0.001):
+def distance(x, y, xx, yy):
+	return pow(pow(x-xx,2) + pow(y-yy,2) , .5)
+
+def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001):
 	gradient = compute_gradient(matrix)
 	extrema = []
 
 	max_y, max_x = np.where(gradient <= peak_estimation_threshold)
 	for i in range(len(max_y)):
-		if(matrix[max_y[i], max_x[i]] >= threshold):
+		if(matrix[max_y[i], max_x[i]] >= min_value):
 			extrema.append((max_y[i], max_x[i]))
 
 	return extrema

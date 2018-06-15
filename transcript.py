@@ -101,3 +101,74 @@ def draw_extremes(extremes, image, confidence_map, character_map, out="extremes/
 		cv2.rectangle(image_extreme,(xx,yy),(xx+window_size,yy+window_size),(0,0,255),1)
 		cv2.putText(image_extreme, label, (1,len(image)-5), font, .5,(0,0,255),1,cv2.LINE_AA)
 		cv2.imwrite(filename, image_extreme)
+
+#### WINDOW GROUPS ######################
+
+def get_window_groups(extremes, window_size=50, step_size=1, min_group_size=1, max_pixel_distance=1):
+	elements = len(extremes)
+	m = np.zeros((elements, elements))
+	max_distance = pow(pow(max_pixel_distance,2)*2,.5)
+
+	# Create group grid.
+	for i in range(elements):
+		for j in range(elements):
+			coor1 = map_coordinate_to_image_coordinate(extremes[i][0], extremes[i][1],
+				window_size=window_size, step_size=step_size)
+			coor2 = map_coordinate_to_image_coordinate(extremes[j][0], extremes[j][1],
+				window_size=window_size, step_size=step_size)
+
+			if distance(coor1[0], coor1[1], coor2[0], coor2[1]) < max_distance:
+				members = np.where(m[j,:] == 1)[0]
+				for member in members:
+					m[i, member] = 1
+					m[member, i] = 1
+				m[i,j] = 1
+				m[j,i] = 1
+
+	# Create group list
+	groups = []
+	for i in range(elements):
+		if m.shape[1] == 0:
+			break
+		if m[i, :].sum() < min_group_size:
+			continue
+
+		members = np.where(m[i, :] == 1)
+		group = []
+
+		for member in members[0]:
+			group.append(extremes[member])
+
+		m[:,members[0]] = 0
+		groups.append(group)
+	return groups
+	
+def print_group_labels(group, character_map):
+	for member in group:
+		print character_map[member[0]][member[1]]
+
+def get_group_center(group):
+	total = [0,0]
+	for member in group:
+		total[0] += member[0]
+		total[1] += member[1]
+	return total[0]/len(group), total[1]/len(group)
+
+def filter_groups(groups, window_size=50):
+	remove = []
+	for group1 in groups:
+		if group1 in remove:
+			continue
+
+		for  group2 in groups:
+			if group1 == group2:
+				continue
+			center1 = get_group_center(group1)
+			center2 = get_group_center(group2)
+
+			if distance(0, center1[1], 0, center2[1]) < window_size/2:
+				if len(group1) > len(group2):
+					remove.append(group2)
+				else:
+					remove.append(group1)
+	return [group for group in groups if group not in remove]
