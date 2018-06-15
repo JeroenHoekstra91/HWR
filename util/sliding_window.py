@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-def slide_window(word_segment, cnn, window_size=50, step_size=1, visualize=False, topN=3):
+def slide_window(word_segment, cnn, window_size=50, step_size=1, topN=3, visualize=False, sliding_window_delay=100):
 	segment_width = len(word_segment[0])
 	segment_height = len(word_segment)
 
@@ -21,7 +21,7 @@ def slide_window(word_segment, cnn, window_size=50, step_size=1, visualize=False
 	for i in range(y_iterations):
 		for j in range(x_iterations):
 			window = word_segment[window_y:(window_size + window_y), window_x:(window_size + window_x)]
-			results = _analyze_window(window, cnn, visualize=visualize)
+			results = _analyze_window(window, cnn, topN=topN, visualize=visualize, sliding_window_delay=sliding_window_delay)
 			
 			for k in range(len(results)):
 				xx = window_x / step_size
@@ -38,8 +38,13 @@ def slide_window(word_segment, cnn, window_size=50, step_size=1, visualize=False
 
 	return confidence_map, character_map
 
-def get_window_groups(extrema, window_size=50, step_size=1, min_group_size=1, max_pixel_distance=1):
+def get_window_groups(extrema, window_size=50, step_size=1, min_group_size=1, max_pixel_distance=1, max_windows=450):
 	elements = len(extrema)
+	if elements > max_windows:
+		print "Maximum number of windows exceeded: "
+		print "\tAllowed: %d -> Received %d" % (max_windows, elements)
+		return []
+
 	m = np.zeros((elements, elements))
 	max_distance = pow(pow(max_pixel_distance,2)*2,.5)
 
@@ -98,10 +103,10 @@ def filter_window_groups(window_groups, window_size=50):
 
 #### HELPER FUNCTIONS ####
 
-def _analyze_window(window, cnn, visualize=False, topN=3):
+def _analyze_window(window, cnn, topN=3, visualize=False, sliding_window_delay=100):
 	if visualize:
-		cv2.imshow("Test", window)
-		cv2.waitKey(100)
+		cv2.imshow("Sliding Window", window)
+		cv2.waitKey(sliding_window_delay)
 
 	total, results = cnn.analyze_character(window)
 	results = sorted(results.items(), reverse=True)[:topN]
