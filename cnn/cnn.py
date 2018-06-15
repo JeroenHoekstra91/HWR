@@ -62,5 +62,5 @@ class CNN():
                 results[prediction[i]].append(label)
             else:
                 results[prediction[i]] = [label]
-
+                
         return total, results
