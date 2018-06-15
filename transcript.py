@@ -27,6 +27,7 @@ for i in range(len(confidence_map)):
 	filtered_extrema = filter_extrema(extrema, character_map[i])
 
 	window_groups.append(get_window_groups(filtered_extrema,
+		character_map[i],
 		window_size=window_size,
 		step_size=step_size,
 		min_group_size=min_group_size,
