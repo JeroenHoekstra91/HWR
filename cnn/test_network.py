@@ -5,42 +5,12 @@
 
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
+from util.character_map import char_map
 import numpy as np
 import argparse
 import cv2
 
 total = 0
-char_map = {
-    "Alef"  : 0,
-    "Ayin"  : 1,
-    "Bet"   : 2,
-    "Dalet" : 3,
-    "Gimel" : 4,
-    "He"    : 5,
-    "Het": 6,
-    "Kaf": 7,
-    "Kaf-final": 8,
-    "Lamed": 9,
-    "Mem": 10,
-    "Mem-medial": 11,
-    "Noise": 12,
-    "Nun-final": 13,
-    "Nun-medial": 14,
-    "Pe": 15,
-    "Pe-final": 16,
-    "Qof": 17,
-    "Resh": 18,
-    "Samekh": 19,
-    "Shin": 20,
-    "Taw": 21,
-    "Tet": 22,
-    "Tsadi-final": 23,
-    "Tsadi-medial": 24,
-    "Waw": 25,
-    "Yod": 26,
-    "Zayin": 27,
-}
-
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True,

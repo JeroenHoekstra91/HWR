@@ -1,5 +1,6 @@
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
+from util.character_map import char_map
 import cv2
 import numpy as np
 import argparse
@@ -7,36 +8,6 @@ import os
 from openpyxl import *
 from openpyxl.styles import *
 import colorsys
-
-char_map = {
-    "Alef": 0,
-    "Ayin": 1,
-    "Bet": 2,
-    "Dalet": 3,
-    "Gimel": 4,
-    "He": 5,
-    "Het": 6,
-    "Kaf": 7,
-    "Kaf-final": 8,
-    "Lamed": 9,
-    "Mem": 10,
-    "Mem-medial": 11,
-    "Nun-final": 12,
-    "Nun-medial": 13,
-    "Pe": 14,
-    "Pe-final": 15,
-    "Qof": 16,
-    "Resh": 17,
-    "Samekh": 18,
-    "Shin": 19,
-    "Taw": 20,
-    "Tet": 21,
-    "Tsadi-final": 22,
-    "Tsadi-medial": 23,
-    "Waw": 24,
-    "Yod": 25,
-    "Zayin": 26,
-}
 
 confusionmap = np.zeros((27, 27), dtype = np.uint8)
 
