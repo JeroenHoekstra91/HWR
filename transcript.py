@@ -23,9 +23,10 @@ confidence_map, character_map = slide_window(image,
 	visualize=visualize_sliding_window,
 	sliding_window_delay=sliding_window_delay)
 
-window_groups, filtered_window_groups = [],[]
+window_groups, filtered_window_groups, transcript = [],[],[]
 for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
+	transcript.append("")
 	
 	if plot_confidence:
 		draw_plot(confidence_map[i], 
@@ -39,7 +40,7 @@ for i in range(len(confidence_map)):
 
 	smoothed_confidence_map = smooth(confidence_map[i],
 		rounds=smoothing_rounds)
-	extrema = get_local_extrema(confidence_map[i],
+	extrema = get_local_extrema(smoothed_confidence_map,
 		min_value=extreme_min_value, 
 		peak_estimation_threshold=extreme_peak_estimation_threshold,
 		plot_gradient=plot_gradient,
@@ -58,7 +59,11 @@ for i in range(len(confidence_map)):
 		min_character_distance=min_character_distance))
 
 	for group in filtered_window_groups[i]:
+		transcript[i] += character_map[i][group[0][0]][group[0][1]] + " "
+		
 		print "Character %d" % (filtered_window_groups[i].index(group) + 1)
 		print_character_confidence(group, confidence_map[i], character_map[i])
 	if len(filtered_window_groups[i]) == 0:
 		print "\tNo characters determined"
+
+	transcript[i] = transcript[i].strip()

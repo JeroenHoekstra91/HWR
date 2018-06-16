@@ -21,8 +21,9 @@ def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001, plot
 		draw_plot(gradient,
 			threshold=peak_estimation_threshold, 
 			xlabel="x", 
-			ylabel=ylabel, 
-			title=zlabel,
+			ylabel=ylabel,
+			zlabel=zlabel, 
+			title="Gradient Plot",
 			plot_3d=plot_3d)
 
 	return extrema

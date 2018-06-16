@@ -13,9 +13,9 @@ visualize_sliding_window = False
 sliding_window_delay = 20					# determines the sliding window visualization speed
 
 #### EXTREMA CALCULATION SETTINGS ####
-smoothing_rounds = 5						# level of smoothing of the confidence map
+smoothing_rounds = 0						# level of smoothing of the confidence map
 extreme_min_value = .9						# minimal confidence score filter
-extreme_peak_estimation_threshold = 0.001	# determines what is considered an extreme in the gradient
+extreme_peak_estimation_threshold = 0.004	# determines what is considered an extreme in the gradient
 plot_gradient = False
 plot_confidence = False
 plot_3d = False
