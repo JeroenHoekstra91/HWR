@@ -24,7 +24,7 @@ def draw_plot(matrix, threshold=None, xlabel="x", ylabel="y", zlabel="z", title=
 	if plot_3d:
 		_plot_3d(matrix, threshold=threshold, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, title=title)
 	else:
-		_plot_2d(matrix, threshold=threshold, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, title=title, threshold_label=threshold_label)
+		_plot_2d(matrix, threshold=threshold, xlabel=xlabel, ylabel=ylabel, title=title, threshold_label=threshold_label)
 
 def print_character_confidence(extrema, confidence_map, character_map):
 	d = _get_character_confidence(extrema, confidence_map, character_map)
