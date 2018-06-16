@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.signal import savgol_filter
+from util.visualization import *
 
-def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001):
+def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001, plot_gradient=False):
 	gradient = compute_gradient(matrix)
 	extrema = []
 
@@ -9,6 +10,8 @@ def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001):
 	for i in range(len(max_y)):
 		if(matrix[max_y[i], max_x[i]] >= min_value):
 			extrema.append((max_y[i], max_x[i]))
+
+	if plot_gradient: draw_plot(gradient, threshold=peak_estimation_threshold)
 
 	return extrema
 

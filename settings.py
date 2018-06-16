@@ -16,6 +16,8 @@ sliding_window_delay = 20					# determines the sliding window visualization spee
 smoothing_rounds = 5						# level of smoothing of the confidence map
 extreme_min_value = .9						# minimal confidence score filter
 extreme_peak_estimation_threshold = 0.001	# determines what is considered an extreme in the gradient
+plot_gradient = False
+plot_confidence = False
 
 #### GROUPING SETTINGS ####
 min_group_size = 1
