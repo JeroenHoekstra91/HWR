@@ -3,13 +3,18 @@ import cv2
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+import os
+from util.sliding_window import *
 
-def draw_extrema(extrema, image, character_map, out="extrema/", window_size=50, step_size=1):
+def visualize_extrema_windows(extrema, image, character_map, out="extrema/", window_size=50, step_size=1):
+	try: os.makedirs(out)
+	except: pass
+
 	for coor in extrema:
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		label = character_map[coor[0]][coor[1]]
 		image_extreme = image.copy()
-		image_coor = _map_coordinate_to_image_coordinate(coor[0], coor[1],
+		image_coor = map_coordinate_to_image_coordinate(coor[0], coor[1],
 			window_size=window_size, step_size=step_size)
 		filename = out + label + "(" + str(image_coor[1]) + ", " + str(image_coor[0]) + ").png"
 

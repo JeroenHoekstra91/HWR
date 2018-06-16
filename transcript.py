@@ -28,8 +28,10 @@ for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
 	transcript.append("")
 	
+	smoothed_confidence_map = smooth(confidence_map[i],
+		rounds=smoothing_rounds)
 	if plot_confidence:
-		draw_plot(confidence_map[i], 
+		draw_plot(smoothed_confidence_map, 
 			threshold=extreme_min_value, 
 			xlabel="x", 
 			ylabel=ylabel,
@@ -38,14 +40,19 @@ for i in range(len(confidence_map)):
 			threshold_label="minimal confidence",
 			plot_3d=plot_3d)
 
-	smoothed_confidence_map = smooth(confidence_map[i],
-		rounds=smoothing_rounds)
 	extrema = get_local_extrema(smoothed_confidence_map,
 		min_value=extreme_min_value, 
 		peak_estimation_threshold=extreme_peak_estimation_threshold,
 		plot_gradient=plot_gradient,
 		plot_3d=plot_3d)
 	filtered_extrema = filter_extrema(extrema, character_map[i])
+	if visualize_extrema:
+		visualize_extrema_windows(filtered_extrema,
+			image,
+			character_map[i],
+			out=extrema_file_path + "/conf_level_" + str(i) + "/",
+			window_size=window_size,
+			step_size=step_size)
 
 	window_groups.append(get_window_groups(filtered_extrema,
 		character_map[i],

@@ -51,9 +51,9 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 	# Create group grid.
 	for i in range(elements):
 		for j in range(elements):
-			coor1 = _map_coordinate_to_image_coordinate(extrema[i][0], extrema[i][1],
+			coor1 = map_coordinate_to_image_coordinate(extrema[i][0], extrema[i][1],
 				window_size=window_size, step_size=step_size)
-			coor2 = _map_coordinate_to_image_coordinate(extrema[j][0], extrema[j][1],
+			coor2 = map_coordinate_to_image_coordinate(extrema[j][0], extrema[j][1],
 				window_size=window_size, step_size=step_size)
 
 			# Make sure that group members have the same label
@@ -105,6 +105,11 @@ def filter_window_groups(window_groups, window_size=50, min_character_distance=2
 					remove.append(group1)
 	return [group for group in window_groups if group not in remove]
 
+def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
+	xx = x*step_size + window_size/2.0
+	yy = y*step_size + window_size/2.0
+	return xx, yy
+
 #### HELPER FUNCTIONS ####
 
 def _analyze_window(window, cnn, topN=3, visualize=False, sliding_window_delay=100):
@@ -115,11 +120,6 @@ def _analyze_window(window, cnn, topN=3, visualize=False, sliding_window_delay=1
 	total, results = cnn.analyze_character(window)
 	results = sorted(results.items(), reverse=True)[:topN]
 	return results
-
-def _map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
-	xx = x*step_size + window_size/2.0
-	yy = y*step_size + window_size/2.0
-	return xx, yy
 
 def _get_window_group_center(group):
 	total = [0,0]
