@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import savgol_filter
 from util.visualization import *
 
-def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001, plot_gradient=False):
+def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001, plot_gradient=False, plot_3d=False):
 	gradient = compute_gradient(matrix)
 	extrema = []
 
@@ -11,7 +11,19 @@ def get_local_extrema(matrix, min_value=0, peak_estimation_threshold=0.001, plot
 		if(matrix[max_y[i], max_x[i]] >= min_value):
 			extrema.append((max_y[i], max_x[i]))
 
-	if plot_gradient: draw_plot(gradient, threshold=peak_estimation_threshold)
+	if plot_gradient: 
+		if plot_3d:
+			ylabel = "y"
+			zlabel = "gradient"
+		else:
+			ylabel = "gradient"
+			zlabel = "z"
+		draw_plot(gradient,
+			threshold=peak_estimation_threshold, 
+			xlabel="x", 
+			ylabel=ylabel, 
+			title=zlabel,
+			plot_3d=plot_3d)
 
 	return extrema
 

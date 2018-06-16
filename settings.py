@@ -18,6 +18,7 @@ extreme_min_value = .9						# minimal confidence score filter
 extreme_peak_estimation_threshold = 0.001	# determines what is considered an extreme in the gradient
 plot_gradient = False
 plot_confidence = False
+plot_3d = False
 
 #### GROUPING SETTINGS ####
 min_group_size = 1

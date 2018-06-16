@@ -7,6 +7,13 @@ from ngrams.ngrams import Ngrams
 
 image = cv2.imread(image_file)
 cnn = CNN(cnn_model)
+if plot_3d:
+	ylabel = "y"
+	zlabel = "confidence"
+else:
+	ylabel = "confidence"
+	zlabel = "z"
+
 
 confidence_map, character_map = slide_window(image,
 	cnn, 
@@ -20,15 +27,23 @@ window_groups, filtered_window_groups = [],[]
 for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
 	
-	if plot_confidence: 
-		draw_plot(confidence_map[i], threshold=extreme_min_value)
+	if plot_confidence:
+		draw_plot(confidence_map[i], 
+			threshold=extreme_min_value, 
+			xlabel="x", 
+			ylabel=ylabel,
+			zlabel=zlabel, 
+			title="Confidence Plot",
+			threshold_label="minimal confidence",
+			plot_3d=plot_3d)
 
 	smoothed_confidence_map = smooth(confidence_map[i],
 		rounds=smoothing_rounds)
 	extrema = get_local_extrema(confidence_map[i],
 		min_value=extreme_min_value, 
 		peak_estimation_threshold=extreme_peak_estimation_threshold,
-		plot_gradient=plot_gradient)
+		plot_gradient=plot_gradient,
+		plot_3d=plot_3d)
 	filtered_extrema = filter_extrema(extrema, character_map[i])
 
 	window_groups.append(get_window_groups(filtered_extrema,
