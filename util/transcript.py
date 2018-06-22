@@ -42,6 +42,12 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
 	transcripts.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
 	return transcripts
 
+def to_hebrew(word):
+	hebrew = ""
+	for character in word.split(" "):
+		hebrew += hebrew_map[character]
+	return hebrew
+
 def filter_transcripts(transcripts, ngrams_likelihood_threshold=0.0):
 	return [x for x in transcripts if x["ngrams_likelihood"] > ngrams_likelihood_threshold]
 
