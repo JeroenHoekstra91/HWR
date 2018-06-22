@@ -2,12 +2,13 @@ from settings import *
 from util.sliding_window import *
 from util.gradient import *
 from util.visualization import *
+from util.transcript import *
 from cnn.cnn import CNN
 from ngrams.ngrams import Ngrams
 
 image = cv2.imread(image_file)
 cnn = CNN(cnn_model)
-ngrams = Ngrams(bayesian_model)
+ngrams_model = Ngrams(bayesian_model)
 if plot_3d:
 	ylabel = "y"
 	zlabel = "confidence"
@@ -24,10 +25,9 @@ confidence_map, character_map = slide_window(image,
 	visualize=visualize_sliding_window,
 	sliding_window_delay=sliding_window_delay)
 
-window_groups, filtered_window_groups, transcript, ngrams_likelihood = [],[],[],[]
+window_groups, filtered_window_groups, transcript = [],[],[]
 for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
-	transcript.append("")
 	
 	smoothed_confidence_map = smooth(confidence_map[i],
 		rounds=smoothing_rounds)
@@ -63,16 +63,13 @@ for i in range(len(confidence_map)):
 		max_pixel_distance=max_pixel_distance,
 		max_windows=max_windows))
 	filtered_window_groups.append(filter_window_groups(window_groups[i],
-		window_size=window_size,
 		min_character_distance=min_character_distance))
 
-	for group in filtered_window_groups[i]:
-		transcript[i] += character_map[i][group[0][0]][group[0][1]] + " "
-		
-		print "Character %d" % (filtered_window_groups[i].index(group) + 1)
-		print_character_confidence(group, confidence_map[i], character_map[i])
-	if len(filtered_window_groups[i]) == 0:
-		print "\tNo characters determined"
+	transcript.append(generate_transcripts(ngrams_model,
+		filtered_window_groups[i],
+		character_map[i],
+		confidence_map[i]))
+	
+	for e in transcript[i]:
+	 	print e["word"] + " => " + str(e["cnn_confidence_sum"])
 
-	transcript[i] = transcript[i].strip()
-	ngrams_likelihood.append(ngrams.classify(transcript[i].split(" ")[0], "_".join(transcript[i].split(" ")[1:])))

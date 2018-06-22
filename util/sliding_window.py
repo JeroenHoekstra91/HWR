@@ -86,24 +86,29 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 		window_groups.append(group)
 	return window_groups
 
-def filter_window_groups(window_groups, window_size=50, min_character_distance=25):
-	remove = []
+def filter_window_groups(window_groups, min_character_distance=25):
+	assigned, groups = [],[]
 	for group1 in window_groups:
-		if group1 in remove:
+		if group1 in assigned:
 			continue
 
-		for  group2 in window_groups:
-			if group1 == group2:
+		assigned.append(group1)
+		groups.append([group1])
+		
+		for group2 in window_groups:
+			if group1 == group2 or group2 in assigned:
 				continue
+			
 			center1 = _get_window_group_center(group1)
 			center2 = _get_window_group_center(group2)
-
+			
 			if _distance(0, center1[1], 0, center2[1]) < min_character_distance:
-				if len(group1) > len(group2):
-					remove.append(group2)
-				else:
-					remove.append(group1)
-	return [group for group in window_groups if group not in remove]
+				assigned.append(group2)
+				groups[-1].append(group2)
+
+	for i in range(len(groups)):
+		groups[i].sort(key=lambda x: len(x), reverse=True)
+	return groups
 
 def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
 	xx = x*step_size + window_size/2.0
