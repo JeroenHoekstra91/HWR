@@ -9,13 +9,13 @@ from ngrams.ngrams import Ngrams
 image = cv2.imread(image_file)
 cnn = CNN(cnn_model)
 ngrams_model = Ngrams(bayesian_model)
+
 if plot_3d:
 	ylabel = "y"
 	zlabel = "confidence"
 else:
 	ylabel = "confidence"
 	zlabel = "z"
-
 
 confidence_map, character_map = slide_window(image,
 	cnn, 
@@ -25,10 +25,11 @@ confidence_map, character_map = slide_window(image,
 	visualize=visualize_sliding_window,
 	sliding_window_delay=sliding_window_delay)
 
-window_groups, filtered_window_groups, transcript = [],[],[]
+window_groups, sorted_window_groups, transcripts, filtered_transcripts = [],[],[],[]
 for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
 	
+	# Smoothes and plots the confidence map.
 	smoothed_confidence_map = smooth(confidence_map[i],
 		rounds=smoothing_rounds)
 	if plot_confidence:
@@ -41,6 +42,7 @@ for i in range(len(confidence_map)):
 			threshold_label="minimal confidence",
 			plot_3d=plot_3d)
 
+	# Calculates and visualizes local extrema in the confidence map.
 	extrema = get_local_extrema(smoothed_confidence_map,
 		min_value=extreme_min_value, 
 		peak_estimation_threshold=extreme_peak_estimation_threshold,
@@ -55,6 +57,7 @@ for i in range(len(confidence_map)):
 			window_size=window_size,
 			step_size=step_size)
 
+	# Groups windows based on proximity and cnn determined label.
 	window_groups.append(get_window_groups(filtered_extrema,
 		character_map[i],
 		window_size=window_size,
@@ -62,14 +65,17 @@ for i in range(len(confidence_map)):
 		min_group_size=min_group_size,
 		max_pixel_distance=max_pixel_distance,
 		max_windows=max_windows))
-	filtered_window_groups.append(filter_window_groups(window_groups[i],
+	sorted_window_groups.append(sort_window_groups(window_groups[i],
 		min_character_distance=min_character_distance))
 
-	transcript.append(generate_transcripts(ngrams_model,
-		filtered_window_groups[i],
+	# Generate and filter possible transcripts.
+	transcripts.append(generate_transcripts(ngrams_model,
+		sorted_window_groups[i],
 		character_map[i],
 		confidence_map[i]))
+	filtered_transcripts.append(filter_transcripts(transcripts[i],
+		ngrams_likelihood_threshold=ngrams_likelihood_threshold))
 	
-	for e in transcript[i]:
-	 	print e["word"] + " => " + str(e["cnn_confidence_sum"])
+	for transcript in transcripts[i]:
+	 	print transcript["word"] + " => " + str(transcript["cnn_confidence_sum"])
 

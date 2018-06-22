@@ -5,6 +5,7 @@ image_file = "data/words/EDITED.png"
 
 #### N-GRAM SETTINGS ####
 bayesian_model = "ngrams/models/bayes_classifier.p"
+ngrams_likelihood_threshold = 0.0
 
 #### SLIDING WINDOW SETTINGS ####
 window_size = 50
@@ -14,7 +15,7 @@ sliding_window_delay = 20					# determines the sliding window visualization spee
 
 #### EXTREMA CALCULATION SETTINGS ####
 smoothing_rounds = 0						# level of smoothing of the confidence map
-extreme_min_value = .9						# minimal confidence score filter
+extreme_min_value = 0.9						# minimal confidence score filter
 extreme_peak_estimation_threshold = 0.004	# determines what is considered an extreme in the gradient
 visualize_extrema = False
 extrema_file_path = "extrema/"				# determines where to store the extrema window images

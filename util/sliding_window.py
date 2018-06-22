@@ -86,7 +86,7 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 		window_groups.append(group)
 	return window_groups
 
-def filter_window_groups(window_groups, min_character_distance=25):
+def sort_window_groups(window_groups, min_character_distance=25):
 	assigned, groups = [],[]
 	for group1 in window_groups:
 		if group1 in assigned:

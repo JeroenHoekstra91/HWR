@@ -1,45 +1,46 @@
 import numpy as np
 
-def generate_transcripts(ngrams_model, filtered_window_groups, character_map, confidence_map):
-	transcript = {}
-	end = np.zeros((1, len(filtered_window_groups)))
-	for j in range(len(filtered_window_groups)):
-		end[0,j] = len(filtered_window_groups[j])
+def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map):
+	transcripts = {}
+	end = np.zeros((1, len(sorted_window_groups)))
+	for i in range(len(sorted_window_groups)):
+		end[0,i] = len(sorted_window_groups[i])
 
 	for counter in _count(end):
 		word = ""
-		number_of_windows = 0
+		number_of_windows = []
 		cnn_confidence_sum = 0
 
-		for j in range(len(filtered_window_groups)):
-			group = filtered_window_groups[j][int(counter[0,j])]
+		for i in range(len(sorted_window_groups)):
+			group = sorted_window_groups[i][int(counter[0,i])]
 			character = character_map[group[0][0]][group[0][1]]
 			word += character + " "
-			number_of_windows += len(group)
+			number_of_windows.append(len(group))
 
 			for coor in group:
 				cnn_confidence_sum += confidence_map[coor[0], coor[1]]
 
 		word = word.strip()
 		
-		transcript_element = {
-			"cnn_confidence_sum": cnn_confidence_sum,
-			"number_of_windows": number_of_windows
-			}
-
-		if word in transcript.keys():
-			for key in transcript_element.keys():
-				transcript[word][key] += transcript_element[key]
+		if word in transcripts.keys():
+			transcripts[word]["cnn_confidence_sum"] += cnn_confidence_sum
+			for i in range(len(number_of_windows)):
+				transcripts[word]["number_of_windows"][i] += number_of_windows[i]
 		else:
 			ngrams_likelihood = ngrams_model.classify(word.split(" ")[0], "_".join(word.split(" ")[1:]))
-			transcript[word] = transcript_element
-			transcript[word]["ngrams_likelihood"] = ngrams_likelihood
+			transcripts[word] = {}
+			transcripts[word]["ngrams_likelihood"] = ngrams_likelihood
+			transcripts[word]["cnn_confidence_sum"] = cnn_confidence_sum
+			transcripts[word]["number_of_windows"] = number_of_windows
 
-	transcript = [dict({"word": key}, **value) for (key, value) in transcript.items()]
-	transcript.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
-	return transcript
+	transcripts = [dict({"word": key}, **value) for (key, value) in transcripts.items()]
+	transcripts.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
+	return transcripts
 
-### HELPER FUNCTIONS ###
+def filter_transcripts(transcripts, ngrams_likelihood_threshold=0.0):
+	return [x for x in transcripts if x["ngrams_likelihood"] > ngrams_likelihood_threshold]
+
+#### HELPER FUNCTIONS ####
 
 def _count(end):
 	if len(end[0]) == 0: return
