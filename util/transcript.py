@@ -21,13 +21,18 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
 				cnn_confidence_sum += confidence_map[coor[0], coor[1]]
 
 		word = word.strip()
+		word = " ".join(word.split(" ")[::-1])
+		number_of_windows = number_of_windows[::-1]
 		
 		if word in transcripts.keys():
 			transcripts[word]["cnn_confidence_sum"] += cnn_confidence_sum
 			for i in range(len(number_of_windows)):
 				transcripts[word]["number_of_windows"][i] += number_of_windows[i]
 		else:
-			ngrams_likelihood = ngrams_model.classify(word.split(" ")[0], "_".join(word.split(" ")[1:]))
+			klass = word.split(' ')[-1]
+			feature = '_'.join(word.split(' ')[0:-1])
+			ngrams_likelihood = ngrams_model.classify(klass, feature)
+
 			transcripts[word] = {}
 			transcripts[word]["ngrams_likelihood"] = ngrams_likelihood
 			transcripts[word]["cnn_confidence_sum"] = cnn_confidence_sum

@@ -5,7 +5,7 @@ image_file = "data/words/EDITED.png"
 
 #### N-GRAM SETTINGS ####
 bayesian_model = "ngrams/models/bayes_classifier.p"
-ngrams_likelihood_threshold = 0.0
+ngrams_likelihood_threshold = 0.0			# determines the minimal ngrams likelihood for filtering transcripts
 
 #### SLIDING WINDOW SETTINGS ####
 window_size = 50
