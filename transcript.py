@@ -7,6 +7,7 @@ from ngrams.ngrams import Ngrams
 
 image = cv2.imread(image_file)
 cnn = CNN(cnn_model)
+ngrams = Ngrams(bayesian_model)
 if plot_3d:
 	ylabel = "y"
 	zlabel = "confidence"
@@ -23,7 +24,7 @@ confidence_map, character_map = slide_window(image,
 	visualize=visualize_sliding_window,
 	sliding_window_delay=sliding_window_delay)
 
-window_groups, filtered_window_groups, transcript = [],[],[]
+window_groups, filtered_window_groups, transcript, ngrams_likelihood = [],[],[],[]
 for i in range(len(confidence_map)):
 	print "CONFIDENCE_LEVEL: %d" % (i + 1)
 	transcript.append("")
@@ -74,3 +75,4 @@ for i in range(len(confidence_map)):
 		print "\tNo characters determined"
 
 	transcript[i] = transcript[i].strip()
+	ngrams_likelihood.append(ngrams.classify(transcript[i].split(" ")[0], "_".join(transcript[i].split(" ")[1:])))
