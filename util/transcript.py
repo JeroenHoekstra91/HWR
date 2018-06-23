@@ -1,4 +1,5 @@
 import numpy as np
+import types
 
 def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map):
 	transcripts = {}
@@ -55,21 +56,29 @@ def where(element, collection):
 	sub_collection = list(collection)
 	index = [0]
 	indices = []
-
+	
 	while True:
 		while index[-1] == len(sub_collection):
 			if len(index) == 1: return indices
+			
 			# Backtrack by one
 			index = index[:-1]
 			index[-1] += 1
 			sub_collection = list(collection)
+			
 			for i in range(len(index) - 1):
 				sub_collection = sub_collection[index[i]]
-		
-		if sub_collection[index[-1]] == element:
-			indices.append(list(index))
-		
-		if type(sub_collection[index[-1]]) == list:
+
+		if type(element) == types.LambdaType:
+			if not type(sub_collection[index[-1]]) in [list, np.ndarray]:
+				try:
+					if element(sub_collection[index[-1]]):
+						indices.append(list(index))
+				except: pass
+		elif sub_collection[index[-1]] == element:
+			indices.append(list(index))	
+
+		if type(sub_collection[index[-1]]) in [list, np.ndarray]:
 			# Step into list element
 			sub_collection = sub_collection[index[-1]]
 			index.append(0)
