@@ -115,6 +115,11 @@ def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
 	yy = y*step_size + window_size/2.0
 	return xx, yy
 
+def image_coordinate_to_map_coordinate(x, y, window_size=50, step_size=1):
+	xx = (x - window_size/2) / step_size
+	yy = (y - window_size/2) / step_size
+	return xx, yy
+
 #### HELPER FUNCTIONS ####
 
 def _analyze_window(window, cnn, topN=3, visualize=False, sliding_window_delay=100):

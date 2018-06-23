@@ -51,6 +51,35 @@ def to_hebrew(word):
 def filter_transcripts(transcripts, ngrams_likelihood_threshold=0.0):
 	return [x for x in transcripts if x["ngrams_likelihood"] > ngrams_likelihood_threshold]
 
+def where(element, collection):
+	sub_collection = list(collection)
+	index = [0]
+
+	while True:
+		try:
+			index[-1] = sub_collection.index(element)
+			return index
+		except ValueError:
+			if type(sub_collection[index[-1]]) == list:
+				# Step into list element
+				sub_collection = sub_collection[index[-1]]
+				index.append(0)
+			else:
+				index[-1] += 1
+
+		if index[-1] == len(sub_collection):
+			if len(index) == 1: return []
+			# Backtrack by one
+			index = index[:-1]
+			index[-1] += 1
+			# Follow indices in index
+			for i in range(len(index)):
+				if i == 0:
+					sub_collection = list(collection)
+				sub_collection = sub_collection[index[i]]
+			index.append(0)
+
+
 #### HELPER FUNCTIONS ####
 
 def _count(end):

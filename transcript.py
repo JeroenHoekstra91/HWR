@@ -76,6 +76,6 @@ for i in range(len(confidence_map)):
 	filtered_transcripts.append(filter_transcripts(transcripts[i],
 		ngrams_likelihood_threshold=ngrams_likelihood_threshold))
 	
-	for transcript in transcripts[i]:
+	for transcript in filtered_transcripts[i]:
 	 	print transcript["word"] + " => " + str(transcript["cnn_confidence_sum"])
 
