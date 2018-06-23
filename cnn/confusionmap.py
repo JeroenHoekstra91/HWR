@@ -1,6 +1,5 @@
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
-from util.character_map import char_map
 import cv2
 import numpy as np
 import argparse
@@ -9,7 +8,38 @@ from openpyxl import *
 from openpyxl.styles import *
 import colorsys
 
-confusionmap = np.zeros((27, 27), dtype = np.uint8)
+char_map = {
+    "Alef": 0,
+    "Ayin": 1,
+    "Bet": 2,
+    "Dalet": 3,
+    "Gimel": 4,
+    "He": 5,
+    "Het": 6,
+    "Kaf": 7,
+    "Kaf-final": 8,
+    "Lamed": 9,
+    "Mem": 10,
+    "Mem-medial": 11,
+    "Noise": 12,
+    "Nun-final": 13,
+    "Nun-medial": 14,
+    "Pe": 15,
+    "Pe-final": 16,
+    "Qof": 17,
+    "Resh": 18,
+    "Samekh": 19,
+    "Shin": 20,
+    "Taw": 21,
+    "Tet": 22,
+    "Tsadi-final": 23,
+    "Tsadi-medial": 24,
+    "Waw": 25,
+    "Yod": 26,
+    "Zayin": 27,
+}
+
+confusionmap = np.zeros((28, 28), dtype=np.uint8)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -72,16 +102,16 @@ hsv = colorsys.rgb_to_hsv(
     int(confusion_color[2:4], 16)/255.0,
     int(confusion_color[4:6], 16)/255.0)
 
-for i in range(27):
+for i in range(28):
     # Write labels
     cell = sheet.cell(column=i+2, row=1, value=sorted(char_map.keys())[i])
     cell.alignment=Alignment(text_rotation=90, horizontal='center')
     sheet.cell(column=1, row=i+2, value=sorted(char_map.keys())[i])
 
-    min_confusion = confusionmap[i][0:27].min()
-    max_confusion = confusionmap[i][0:27].max()
+    min_confusion = confusionmap[i][0:28].min()
+    max_confusion = confusionmap[i][0:28].max()
     # write cell values
-    for j in range(27):
+    for j in range(28):
         col = j + 2
         row = i + 2
         value = confusionmap[i][j]
