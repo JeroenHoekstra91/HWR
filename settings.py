@@ -1,5 +1,5 @@
 #### CNN SETTINGS ####
-cnn_model = "cnn/models/ModelTrainedWithNoise.model"
+cnn_model = "cnn/models/ModelTrainedWithDamage.model"
 topN = 3									# Use the top N character predictions
 image_file = "data/words/EDITED.png"
 
