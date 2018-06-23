@@ -54,27 +54,27 @@ def filter_transcripts(transcripts, ngrams_likelihood_threshold=0.0):
 def where(element, collection):
 	sub_collection = list(collection)
 	index = [0]
-	
+	indices = []
+
 	while True:
 		while index[-1] == len(sub_collection):
-			if len(index) == 1: return []
+			if len(index) == 1: return indices
 			# Backtrack by one
 			index = index[:-1]
+			index[-1] += 1
 			sub_collection = list(collection)
 			for i in range(len(index) - 1):
 				sub_collection = sub_collection[index[i]]
+		
+		if sub_collection[index[-1]] == element:
+			indices.append(list(index))
+		
+		if type(sub_collection[index[-1]]) == list:
+			# Step into list element
+			sub_collection = sub_collection[index[-1]]
+			index.append(0)
+		else:
 			index[-1] += 1
-
-		try:
-			index[-1] = sub_collection.index(element)
-			return index
-		except ValueError:
-			if type(sub_collection[index[-1]]) == list:
-				# Step into list element
-				sub_collection = sub_collection[index[-1]]
-				index.append(0)
-			else:
-				index[-1] += 1
 
 
 #### HELPER FUNCTIONS ####
