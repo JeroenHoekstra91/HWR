@@ -1,7 +1,7 @@
 import numpy as np
 import types
 
-from settings import txt_output_filename
+from settings import txt_output_filename, Ngrams
 from util.character_map import hebrew_map
 
 
@@ -35,7 +35,7 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
                 transcripts[word]["number_of_windows"][i] += number_of_windows[i]
         else:
             klass = word.split(' ')[-1]
-            feature = '_'.join(word.split(' ')[0:-1])
+            feature = '_'.join(word.split(' ')[-Ngrams:-1])
             ngrams_likelihood = ngrams_model.classify(klass, feature)
 
             transcripts[word] = {}

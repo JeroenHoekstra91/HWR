@@ -8,6 +8,7 @@ image_padding = 5
 
 #### N-GRAM SETTINGS ####
 bayesian_model = "ngrams/models/bayes_classifier.p"
+Ngrams = 2
 ngrams_likelihood_threshold = 0.0						# determines the minimal ngrams likelihood for filtering transcripts
 
 #### SLIDING WINDOW SETTINGS ####
