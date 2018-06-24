@@ -26,7 +26,12 @@ plot_confidence = False
 plot_3d = False
 
 #### GROUPING SETTINGS ####
-min_group_size = 1
+min_group_size = 4
 max_pixel_distance = 1									# determines what is considered a neighbouring window
 max_windows = 450										# prevents the window grouping algorithm from stalling
 min_character_distance = window_size/2					# determines when a window group is considered overlapping
+
+#### OUTPUT_FILE ####
+ngrams_likelihood_weight = 1
+cnn_confidence_weight = 1
+txt_output_filename = "Hebrew"

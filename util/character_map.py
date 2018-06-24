@@ -1,3 +1,5 @@
+# coding=utf-8
+
 char_map = {
     "Alef": 0,
     "Ayin": 1,
