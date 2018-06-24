@@ -3,6 +3,7 @@ from util.sliding_window import *
 from util.gradient import *
 from util.visualization import *
 from util.transcript import *
+from util.image import *
 from cnn.cnn import CNN
 from ngrams.ngrams import Ngrams
 
@@ -17,6 +18,7 @@ else:
 	ylabel = "confidence"
 	zlabel = "z"
 
+image = pad_image(image, padding=image_padding)
 confidence_map, character_map = slide_window(image,
 	cnn, 
 	window_size=window_size,

@@ -60,7 +60,7 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 			if character_map[extrema[i][0]][extrema[i][1]] != character_map[extrema[j][0]][extrema[j][1]]:
 				continue
 
-			if _distance(coor1[0], coor1[1], coor2[0], coor2[1]) < max_distance:
+			if _distance(coor1[0], coor1[1], coor2[0], coor2[1]) <= max_distance:
 				members = np.where(m[j,:] == 1)[0]
 				for member in members:
 					m[i, member] = 1
@@ -88,17 +88,19 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
 
 def sort_window_groups(window_groups, min_character_distance=25):
 	assigned, groups = [],[]
-	for group1 in window_groups:
+	sorted_window_groups = sorted(window_groups, key=lambda x: _get_window_group_center(x)[1])
+
+	for group1 in sorted_window_groups:
 		if group1 in assigned:
 			continue
 
 		assigned.append(group1)
 		groups.append([group1])
 		
-		for group2 in window_groups:
+		for group2 in sorted_window_groups:
 			if group1 == group2 or group2 in assigned:
 				continue
-			
+
 			center1 = _get_window_group_center(group1)
 			center2 = _get_window_group_center(group2)
 			
@@ -108,6 +110,7 @@ def sort_window_groups(window_groups, min_character_distance=25):
 
 	for i in range(len(groups)):
 		groups[i].sort(key=lambda x: len(x), reverse=True)
+	
 	return groups
 
 def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
