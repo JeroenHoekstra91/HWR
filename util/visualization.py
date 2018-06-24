@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import os
+import types
 from util.sliding_window import *
 
 def visualize_extrema_windows(extrema, image, character_map, out="extrema/", window_size=50, step_size=1):
@@ -39,6 +40,25 @@ def print_character_confidence(extrema, confidence_map, character_map):
 		print "\tmin: " + str(np.min(d[key]))
 		print "\tmax: " + str(np.max(d[key]))
 		print "\tcount: " + str(len(d[key])) + " instances"
+
+def print_information_loss(current_collection, previous_collection, original_collection=None, operation_label=None):
+	current_collection_size = _get_collection_size(current_collection)
+	previous_collection_size = _get_collection_size(previous_collection)
+	loss = 0.0
+	
+	if previous_collection_size > 0:
+		loss = 100.0 - current_collection_size / previous_collection_size * 100.0
+	
+	if operation_label == None:
+		print "Relative information loss: " + str(loss) + "%"
+	else:
+		print "Relative information loss after " + operation_label + ": " + str(loss) + "%"
+
+	if not type(original_collection) == types.NoneType:
+		original_collection_size = _get_collection_size(original_collection)
+		loss = 100.0 - current_collection_size / original_collection_size * 100.0
+		print "Total information loss: " + str(loss) + "%"
+
 
 #### HELPER FUNCTIONS ####
 
@@ -99,3 +119,13 @@ def _plot_3d(matrix, threshold=None, xlabel="x", ylabel="y", zlabel="z", title="
 	axis.set_zlabel(zlabel)
 	plt.title(title)
 	plt.show()
+
+def _get_collection_size(collection):
+	elements = 0.0
+	for i in range(len(collection)):
+		if type(collection[i]) in [list, np.ndarray]:
+			elements += _get_collection_size(collection[i])
+		else:
+			return len(collection) * 1.0
+	return elements
+		

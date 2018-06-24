@@ -49,7 +49,11 @@ for i in range(len(confidence_map)):
 		min_value=extreme_min_value(smoothed_confidence_map),
 		plot_gradient=plot_gradient,
 		plot_3d=plot_3d)
+	print_information_loss(extrema, smoothed_confidence_map, confidence_map[i],
+		operation_label="filtering on extrema")
 	filtered_extrema = filter_extrema(extrema, character_map[i])
+	print_information_loss(filtered_extrema, extrema, confidence_map[i],
+		operation_label="filtering extrema on noise labels")
 	if visualize_extrema:
 		visualize_extrema_windows(filtered_extrema,
 			image,
@@ -66,8 +70,12 @@ for i in range(len(confidence_map)):
 		min_group_size=min_group_size,
 		max_pixel_distance=max_pixel_distance,
 		max_windows=max_windows))
+	print_information_loss(window_groups[i], filtered_extrema, confidence_map[i],
+		operation_label="creating window groups")
 	sorted_window_groups.append(sort_window_groups(window_groups[i],
 		min_character_distance=min_character_distance))
+	print_information_loss(sorted_window_groups[i], window_groups[i], confidence_map[i],
+		operation_label="sorting window groups")
 
 	# Generate and filter possible transcripts.
 	transcripts.append(generate_transcripts(ngrams_model,
