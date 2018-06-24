@@ -36,7 +36,7 @@ for i in range(len(confidence_map)):
 		rounds=smoothing_rounds)
 	if plot_confidence:
 		draw_plot(smoothed_confidence_map, 
-			threshold=extreme_min_value, 
+			threshold=extreme_min_value(smoothed_confidence_map), 
 			xlabel="x", 
 			ylabel=ylabel,
 			zlabel=zlabel, 
@@ -46,8 +46,7 @@ for i in range(len(confidence_map)):
 
 	# Calculates and visualizes local extrema in the confidence map.
 	extrema = get_local_extrema(smoothed_confidence_map,
-		min_value=extreme_min_value, 
-		peak_estimation_threshold=extreme_peak_estimation_threshold,
+		min_value=extreme_min_value(smoothed_confidence_map),
 		plot_gradient=plot_gradient,
 		plot_3d=plot_3d)
 	filtered_extrema = filter_extrema(extrema, character_map[i])
