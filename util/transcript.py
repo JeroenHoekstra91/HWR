@@ -49,7 +49,7 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
 
 
 def write_to_file(word):
-    fw = open(txt_output_filename+".txt", "a")
+    fw = open(txt_output_filename + ".txt", "a")
     for character in word.split(" "):
         fw.write(hebrew_map[character])
     fw.write("\n")
@@ -61,6 +61,11 @@ def to_hebrew(word):
     for character in word.split(" "):
         hebrew += hebrew_map[character]
     return hebrew
+
+
+def sort_by_relevance(transcripts, cnn_confidence_weight=1, ngrams_likelihood_weight=1):
+    transcripts[0].sort(key=lambda x: x["cnn_confidence_sum"] * cnn_confidence_weight + x[
+         "ngrams_likelihood"] * ngrams_likelihood_weight, reverse=True)
 
 
 def filter_transcripts(transcripts, ngrams_likelihood_threshold=0.0):

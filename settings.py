@@ -32,4 +32,6 @@ max_windows = 450										# prevents the window grouping algorithm from stallin
 min_character_distance = window_size/2					# determines when a window group is considered overlapping
 
 #### OUTPUT_FILE ####
+ngrams_likelihood_weight = 1
+cnn_confidence_weight = 1
 txt_output_filename = "Hebrew"
