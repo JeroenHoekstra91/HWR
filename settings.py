@@ -30,3 +30,6 @@ min_group_size = 1
 max_pixel_distance = 1									# determines what is considered a neighbouring window
 max_windows = 450										# prevents the window grouping algorithm from stalling
 min_character_distance = window_size/2					# determines when a window group is considered overlapping
+
+#### OUTPUT_FILE ####
+txt_output_filename = "Hebrew"

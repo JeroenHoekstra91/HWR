@@ -1,6 +1,9 @@
 import numpy as np
 import types
 
+from settings import txt_output_filename
+from util.character_map import hebrew_map
+
 
 def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map):
     transcripts = {}
@@ -43,6 +46,14 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
     transcripts = [dict({"word": key}, **value) for (key, value) in transcripts.items()]
     transcripts.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
     return transcripts
+
+
+def write_to_file(word):
+    fw = open(txt_output_filename+".txt", "a")
+    for character in word.split(" "):
+        fw.write(hebrew_map[character])
+    fw.write("\n")
+    fw.close()
 
 
 def to_hebrew(word):

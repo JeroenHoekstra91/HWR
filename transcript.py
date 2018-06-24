@@ -80,3 +80,4 @@ for i in range(len(confidence_map)):
 
     for transcript in filtered_transcripts[i]:
         print transcript["word"] + " => " + str(transcript["cnn_confidence_sum"])
+        write_to_file(transcript["word"])
