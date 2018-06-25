@@ -1,17 +1,22 @@
 import numpy as np
 
+#### MISC #####
+show_information_loss = True
+show_transcripts = True
+image_file = "data/words/EDITED.png"
+
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"
 cnn_confidence_weight = 1
 topN = 3                                                # Use the top N character predictions
-image_file = "data/words/EDITED.png"
 image_padding = 5
 
 #### N-GRAM SETTINGS ####
 bayesian_model = "ngrams/models/bayes_classifier.p"
-Ngrams = 2
+ngrams_depth = 2
 ngrams_likelihood_threshold = 0.0                       # determines the minimal ngrams likelihood for filtering transcripts
 ngrams_likelihood_weight = 1
+ngrams_weights = [.4,.6]
 
 #### SLIDING WINDOW SETTINGS ####
 window_size = 50
@@ -35,4 +40,4 @@ max_windows = 450                                       # prevents the window gr
 min_character_distance = window_size/2                  # determines when a window group is considered overlapping
 
 #### OUTPUT_FILE ####
-txt_output_filename = "Hebrew.txt"
+transcript_output_filename = "Hebrew.txt"

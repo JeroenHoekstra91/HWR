@@ -29,7 +29,7 @@ confidence_map, character_map = slide_window(image,
 
 window_groups, sorted_window_groups, transcripts, filtered_transcripts = [], [], [], []
 for i in range(len(confidence_map)):
-    print "CONFIDENCE_LEVEL: %d" % (i + 1)
+    print "\nCONFIDENCE_LEVEL: %d\n" % (i + 1)
 
     # Smoothes and plots the confidence map.
     smoothed_confidence_map = smooth(confidence_map[i],
@@ -49,11 +49,13 @@ for i in range(len(confidence_map)):
         min_value=extreme_min_value(smoothed_confidence_map),
         plot_gradient=plot_gradient,
         plot_3d=plot_3d)
-    print_information_loss(extrema, smoothed_confidence_map, confidence_map[i],
-        operation_label="filtering on extrema")
+    if show_information_loss:
+        print_information_loss(extrema, smoothed_confidence_map, confidence_map[i],
+            operation_label="filtering on extrema")
     filtered_extrema = filter_extrema(extrema, character_map[i])
-    print_information_loss(filtered_extrema, extrema, confidence_map[i],
-        operation_label="filtering extrema on noise labels")
+    if show_information_loss:
+        print_information_loss(filtered_extrema, extrema, confidence_map[i],
+            operation_label="filtering extrema on noise labels")
     if visualize_extrema:
         visualize_extrema_windows(filtered_extrema,
             image,
@@ -70,23 +72,27 @@ for i in range(len(confidence_map)):
         min_group_size=min_group_size,
         max_pixel_distance=max_pixel_distance,
         max_windows=max_windows))
-    print_information_loss(window_groups[i], filtered_extrema, confidence_map[i],
-        operation_label="creating window groups")
+    if show_information_loss:
+        print_information_loss(window_groups[i], filtered_extrema, confidence_map[i],
+            operation_label="creating window groups")
     sorted_window_groups.append(sort_window_groups(window_groups[i],
         min_character_distance=min_character_distance))
-    print_information_loss(sorted_window_groups[i], window_groups[i], confidence_map[i],
-        operation_label="sorting window groups")
+    if show_information_loss:
+        print_information_loss(sorted_window_groups[i], window_groups[i], confidence_map[i],
+            operation_label="sorting window groups")
 
     # Generate and filter possible transcripts.
     transcripts.append(generate_transcripts(ngrams_model,
         sorted_window_groups[i],
         character_map[i],
-        confidence_map[i]))
+        confidence_map[i],
+        ngrams_depth=ngrams_depth,
+        ngrams_weights=ngrams_weights))
     filtered_transcripts.append(filter_transcripts(transcripts[i],
         ngrams_likelihood_threshold=ngrams_likelihood_threshold))
 
-    for transcript in filtered_transcripts[i]:
-        print transcript["word"] + " => " + str(transcript["cnn_confidence_sum"])
+    if show_transcripts:
+        print_transcripts(filtered_transcripts[i])
 
 sort_by_relevance(filtered_transcripts, cnn_confidence_weight, ngrams_likelihood_weight)
-write_to_file(txt_output_filename, filtered_transcripts[0][0]['word'])
+write_to_file(transcript_output_filename, filtered_transcripts[0][0]['word'])

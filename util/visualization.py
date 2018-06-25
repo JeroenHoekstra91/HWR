@@ -49,6 +49,13 @@ def print_character_confidence(extrema, confidence_map, character_map):
         print "\tcount: " + str(len(d[key])) + " instances"
 
 
+def print_transcripts(transcripts):
+    for transcript in transcripts:
+        print transcript["word"] + " => "
+        print "\tcnn_confidence_sum:\t" + str(transcript["cnn_confidence_sum"])
+        print "\tngrams_likelihood:\t" + str(transcript["ngrams_likelihood"])
+
+
 def print_information_loss(current_collection, previous_collection, original_collection=None, operation_label=None):
 	current_collection_size = _get_collection_size(current_collection)
 	previous_collection_size = _get_collection_size(previous_collection)

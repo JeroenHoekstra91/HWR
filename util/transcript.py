@@ -1,11 +1,11 @@
 import numpy as np
 import types
-
-from settings import txt_output_filename, Ngrams
 from util.character_map import hebrew_map
 
 
-def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map):
+def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map,
+    ngrams_depth=2, ngrams_weights=[.4,.6]):
+    
     transcripts = {}
     end = np.zeros((1, len(sorted_window_groups)))
     for i in range(len(sorted_window_groups)):
@@ -34,7 +34,8 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
             for i in range(len(number_of_windows)):
                 transcripts[word]["number_of_windows"][i] += number_of_windows[i]
         else:
-            ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model, word)
+            ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model, word, 
+                ngrams_depth=ngrams_depth, ngrams_weights=ngrams_weights)
 
             transcripts[word] = {}
             transcripts[word]["ngrams_likelihood"] = ngrams_likelihood
@@ -46,16 +47,18 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
     return transcripts
 
 
-def calculate_ngrams_likelihood(model, word):
-    ngrams_likelihood = 1
+def calculate_ngrams_likelihood(model, word, ngrams_depth=2, ngrams_weights=[.4,.6]):
+    if np.sum(ngrams_weights) != 1: raise ValueError('Sum of ngrams weights needs to be 1')
+    word_length = len(word.split(' '))
+    ngrams_likelihood = 1.0/27.0 * ngrams_weights[0] * word_length
 
-    for i in range(len(word.split(' ')) - Ngrams + 1):
-        combination = word.split(' ')[i:i+Ngrams]
-        klass = combination[-1]
-        features = "_".join(combination[:-1])
-        ngrams_likelihood = model.classify(klass, features)
-
-    print word + "->" + str(ngrams_likelihood)
+    for i in range(2, ngrams_depth + 1):
+        for j in range(word_length - i + 1):
+            combination = word.split(' ')[j:j + i]
+            klass = combination[-1]
+            features = "_".join(combination[:-1])
+            ngrams_likelihood += ngrams_weights[i - 1] * model.classify(klass, features)
+            
     return ngrams_likelihood
 
 
