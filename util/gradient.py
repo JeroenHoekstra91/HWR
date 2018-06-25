@@ -1,4 +1,3 @@
-import numpy as np
 from scipy.signal import savgol_filter
 from util.visualization import *
 
