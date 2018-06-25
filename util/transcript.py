@@ -34,9 +34,7 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
             for i in range(len(number_of_windows)):
                 transcripts[word]["number_of_windows"][i] += number_of_windows[i]
         else:
-            klass = word.split(' ')[-1]
-            feature = '_'.join(word.split(' ')[-Ngrams:-1])
-            ngrams_likelihood = ngrams_model.classify(klass, feature)
+            ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model, word)
 
             transcripts[word] = {}
             transcripts[word]["ngrams_likelihood"] = ngrams_likelihood
@@ -46,6 +44,20 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
     transcripts = [dict({"word": key}, **value) for (key, value) in transcripts.items()]
     transcripts.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
     return transcripts
+
+
+def calculate_ngrams_likelihood(model, word):
+    ngrams_likelihood = 1
+
+    for i in range(2, Ngrams+1):
+        for j in range(len(word.split(' ')) - i + 1):
+            combination = word.split(' ')[j:j + i]
+            klass = combination[-1]
+            features = "_".join(combination[:-1])
+            ngrams_likelihood = model.classify(klass, features)
+
+    print word + "->" + str(ngrams_likelihood)
+    return ngrams_likelihood
 
 
 def write_to_file(word):
