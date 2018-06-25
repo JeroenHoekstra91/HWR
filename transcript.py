@@ -89,4 +89,4 @@ for i in range(len(confidence_map)):
         print transcript["word"] + " => " + str(transcript["cnn_confidence_sum"])
 
 sort_by_relevance(filtered_transcripts, cnn_confidence_weight, ngrams_likelihood_weight)
-write_to_file(filtered_transcripts[0][0]['word'])
+write_to_file(txt_output_filename, filtered_transcripts[0][0]['word'])
