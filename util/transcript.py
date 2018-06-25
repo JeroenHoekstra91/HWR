@@ -49,12 +49,11 @@ def generate_transcripts(ngrams_model, sorted_window_groups, character_map, conf
 def calculate_ngrams_likelihood(model, word):
     ngrams_likelihood = 1
 
-    for i in range(2, Ngrams+1):
-        for j in range(len(word.split(' ')) - i + 1):
-            combination = word.split(' ')[j:j + i]
-            klass = combination[-1]
-            features = "_".join(combination[:-1])
-            ngrams_likelihood = model.classify(klass, features)
+    for i in range(len(word.split(' ')) - Ngrams + 1):
+        combination = word.split(' ')[i:i+Ngrams]
+        klass = combination[-1]
+        features = "_".join(combination[:-1])
+        ngrams_likelihood = model.classify(klass, features)
 
     print word + "->" + str(ngrams_likelihood)
     return ngrams_likelihood
