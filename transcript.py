@@ -1,5 +1,4 @@
 from settings import *
-from util.sliding_window import *
 from util.gradient import *
 from util.visualization import *
 from util.transcript import *
