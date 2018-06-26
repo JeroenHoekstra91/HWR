@@ -73,6 +73,7 @@ function r_final = p_segment( I_cur )
     r_final = uint8(zeros(row,col));
     r_final(min_r:max_r,min_c:max_c) = 1;
     r_final = r.*r_final;
-    
+    r_final = plug_holes(r_final, I_cur);
+    r_final(r_final<16) = 0; %Threshold dark values.
 end
 
