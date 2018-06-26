@@ -17,7 +17,7 @@ function [ H, baselines, gaps ] = line_histogram2( BW )
     
     %smooth Histogram and find maxima
     H = smooth_signal(H, 30);
-    [~, baselines] = findpeaks(H,'MinPeakProminence',40);
+    [~, baselines] = findpeaks(H,'MinPeakProminence',15);
     %minima
     Hinv = H*-1;
     [~, gaps] = findpeaks(Hinv,'MinPeakProminence',60);

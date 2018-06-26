@@ -1,10 +1,10 @@
 %% To save all the words
     
     % Directory where the the given images are stored
-    data_dir = 'X:\My Desktop\image-data\';
+    data_dir = '/Users/mario/Developer/HWR-data/data/image-data/';
     
     % where to save the extracted words
-    folder_save = 'X:\My Desktop\extracted_words\';
+    folder_save = '/Users/mario/Developer/HWR-data/results/word-seg';
 
     % get the images and the segmented parchments
     [imgs, ~] = read_images(data_dir);
