@@ -1,4 +1,5 @@
 # coding=utf-8
+import re
 
 char_map = {
     "Alef": 0,
@@ -60,3 +61,53 @@ hebrew_map = {
     "Yod": "י",
     "Zayin": "ז",
 }
+
+flat_map = {
+    "Alef": "a",
+    "Ayin": "b",
+    "Bet": "c",
+    "Dalet": "d",
+    "Gimel": "e",
+    "He": "f",
+    "Het": "g",
+    "Kaf": "h",
+    "Kaf-final": "i",
+    "Lamed": "j",
+    "Mem": "k",
+    "Mem-medial": "l",
+    "Nun-final": "m",
+    "Nun-medial": "n",
+    "Pe": "o",
+    "Pe-final": "p",
+    "Qof": "q",
+    "Resh": "r",
+    "Samekh": "s",
+    "Shin": "t",
+    "Taw": "u",
+    "Tet": "v",
+    "Tsadi-final": "w",
+    "Tsadi-medial": "x",
+    "Waw": "y",
+    "Yod": "z",
+    "Zayin": "0",
+}
+
+def to_hebrew(word):
+    hebrew = ""
+    for character in word.split(" "):
+        hebrew += hebrew_map[character]
+    return hebrew
+
+def to_flat(word):
+    flat = ""
+    for character in word.split(" "):
+        flat += flat_map[character]
+    return flat
+
+def hebrew_to_phonetic(word):
+    phonetics = ""
+    for character in re.findall(r"\xd7.", word):
+        phonetics += hebrew_map.keys()[
+            hebrew_map.values().index(character)
+        ] + " "
+    return phonetics.strip()
