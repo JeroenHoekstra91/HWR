@@ -36,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'adaptive', 'after CC', 'line segmentation'};
+    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'adaptive', 'after CC', 'line segmentation', 'test'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -70,13 +70,21 @@ function binarization_gui
     
     % Histogram overlay for right image
     chk_hist_right = uicontrol('Style', 'checkbox', 'String', 'histogram overlay',...
-    'Position', [900 530 120 50],...
-    'Callback', @hist_overlay, 'Tag', 'hright');       
+    'Position', [900 630 120 50],...
+    'Callback', @hist_overlay, 'Tag', 'hright');
     
     % Save figures button
-    btn_save = uicontrol('Style', 'pushbutton', 'String', 'save figures',...
+    btn_save_all = uicontrol('Style', 'pushbutton', 'String', 'save both figures',...
     'Position', [950 20 60 20],...
-    'Callback', @save);       
+    'Callback', @save_all);       
+
+    btn_save_left = uicontrol('Style', 'pushbutton', 'String', 'save left',...
+    'Position', [20 505 60 20],...
+    'Callback', @save_side, 'Tag', 'left');
+    
+    btn_save_right = uicontrol('Style', 'pushbutton', 'String', 'save right',...
+    'Position', [900 705 60 20],...
+    'Callback', @save_side, 'Tag', 'right');
 
     % k slider label  
     k_txt = uicontrol('Style','text',...
@@ -147,7 +155,7 @@ function binarization_gui
         fig_txt.String = strcat('figure id: ', num2str(idx));
     end
 
-    function save(source, event)
+    function save_all(source, event)
         if length(size(O1)) > 2 | length(size(O2)) > 2
             OW = uint8(ones(size(I,1),(2*size(I,2)+20),3)*255);
             if length(size(O1)) > 2
@@ -172,6 +180,19 @@ function binarization_gui
         imwrite(OW, strcat(save_path, num2str(idx), '_', src1, '_', src2, '.png'));
     end
 
+    function save_side(source, event)
+        if strcmp(source.Tag, 'left')
+            O = O1;
+            src = src1;
+        else
+            O = O2;
+            src = src2;
+        end
+        
+        file_name = strcat('im', num2str(idx), '_', src, '_k', num2str(k), '_wsize', num2str(sz), '.png');
+        imwrite(O, strcat(save_path, file_name));
+    end
+
     function setk(source, event)
         k = source.Value;
         k_txt.String = strcat('k parameter: ', num2str(k));
@@ -192,9 +213,10 @@ function binarization_gui
             case 'parchment only'
                 O1 = P;
             case 'sauvola'
-                O1 = binarization(P, sz, k, 'niblack')*255;
+                O1 = binarization(P, sz, k, 'sauvola')*255;
             case 'median filter'
-                med = medfilt2(P, [7 7]);
+%                 med = medfilt2(P, [7 7]);
+                med = P;
                 O1 = binarization(med, sz, k, 'sauvola')*255;
             case 'otsu'
                 O1 = imbinarize(P, graythresh(P))*255;
@@ -212,6 +234,8 @@ function binarization_gui
                 BW = binarization(P, sz, k, 'sauvola');
                 lines = line_segmentation2  (BW, I);
                 O1 = lines_segmented_visualization(lines);
+            case 'test'
+                O1 = tests(P);
         end
         switch src2
             case 'original'
@@ -237,25 +261,25 @@ function binarization_gui
                 BW = binarization(P, sz, k, 'sauvola');
                 lines = line_segmentation2(BW, I);
                 O2 = lines_segmented_visualization(lines);
+            case 'test'
+                BW = binarization(P, sz, k, 'sauvola');
+                O2 = tests(BW);
         end
         if left_hoverlay && ~ strcmp('line segmentation', src1)
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
+            [BW, angle] = rotating_histogram(BW);
             [H, baselines, gaps] = line_histogram2(BW);
-%             [H, baselines, gaps] = line_histogram2(O1);
+            O1 = imrotate(O1, angle, 'nearest', 'crop');
             O1 = visualize_baselines(O1, baselines, gaps);
             O1 = histogram_visualization(O1, H);
         end
         if right_hoverlay && ~ strcmp('line segmentation', src2)
             BW = binarization(P, sz, k, 'sauvola');
             BW = remove_cc(BW);
-            
-            ver = strel('rectangle', [7 1]);
-            hor = strel('rectangle', [1 15]);
-            BW = imdilate(~BW, hor);
-            BW = imerode(BW, ver);
-            BW = ~BW;
+            [BW, angle] = rotating_histogram(BW);
             [H, baselines, gaps] = line_histogram2(BW);
+            O2 = imrotate(O2, angle, 'nearest', 'crop');
             O2 = visualize_baselines(O2, baselines, gaps);
             O2 = histogram_visualization(O2, H);
         end

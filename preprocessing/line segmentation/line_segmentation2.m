@@ -13,24 +13,11 @@ function seg = line_segmentation2(BW, R)
     %Fuse background with parchment
     BW = remove_cc(BW);
     
-    % Select orientation that will maximise the histogram peak height
-    best_score = 0;
-    best_orientation = Inf;
-    for a = -10:2:10
-        BW2 = imrotate(~BW, a, 'nearest', 'crop'); %image is inverted so that background added from rotation is the same
-        [H, baselines, ~] = line_histogram2(~BW2); %reinvert the image to get black chars
-
-        total_peaks = sum(H(baselines));
-        if total_peaks > best_score
-            best_score = total_peaks;
-            best_orientation = a;
-        end
-    end
-    BW = imrotate(~BW, best_orientation, 'nearest', 'crop');
-    R = imrotate(R, best_orientation, 'nearest', 'crop');
-    BW = ~BW;
-    
+    [BW, angle] = rotating_histogram(BW);
     [~, baselines, ~] = line_histogram2(BW);    
+    
+    R = imrotate(R, angle, 'nearest', 'crop');
+    
     assert(length(baselines) >= 2);
     
     seg = cell(length(baselines), 1);
@@ -58,6 +45,25 @@ function seg = line_segmentation2(BW, R)
         lower_bound = rows(end);
     
         seg{i} = R(upper_bound:lower_bound, :);
+        
+        % In case multiple lines fall in same one due to CC, split them by
+        % gap and keep the one with the highest peak.
+        s = BW(upper_bound:lower_bound, :);
+        [H, baseline, gaps] = line_histogram2(s);
+        if length(gaps) > 0
+            
+        end
+        
+        
+        %Just or debugging
+        s = BW(upper_bound:lower_bound, :);
+        [H, baseline, gaps] = line_histogram2(s);
+%         seg{i} = histogram_visualization(seg{i}, H);
+%         seg{i} = visualize_baselines(seg{i}, baselines, baselines);
+        if length(gaps) > 0
+            disp(['line #: ' num2str(i) ', detected lines: ' num2str(length(baseline))]);
+            disp(['line #: ' num2str(i) ', detected gaps: ' num2str(length(gaps))]);
+        end
     end
 end
 

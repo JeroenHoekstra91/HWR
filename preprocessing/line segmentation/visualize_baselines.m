@@ -31,11 +31,11 @@ function O = visualize_baselines(I, baselines, gaps)
         O(i-2:i+2, :, 3) = 0;
     end    
     
-%     for j = 1: length(gaps)
-%         i = gaps(j);
-%         O(i-2:i+2, :, 1) = 0;
-%         O(i-2:i+2, :, 2) = 0;
-%         O(i-2:i+2, :, 3) = 255;
-%     end
+    for j = 1: length(gaps)
+        i = gaps(j);
+        O(i-2:i+2, :, 1) = 0;
+        O(i-2:i+2, :, 2) = 0;
+        O(i-2:i+2, :, 3) = 255;
+    end
 end
 
