@@ -46,14 +46,6 @@ function seg = line_segmentation2(BW, R)
     
         seg{i} = R(upper_bound:lower_bound, :);
         
-        % In case multiple lines fall in same one due to CC, split them by
-        % gap and keep the one with the highest peak.
-        s = BW(upper_bound:lower_bound, :);
-        [H, baseline, gaps] = line_histogram2(s);
-        if length(gaps) > 0
-            
-        end
-        
         
         %Just or debugging
         s = BW(upper_bound:lower_bound, :);
