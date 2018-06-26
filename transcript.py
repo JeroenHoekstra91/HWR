@@ -47,6 +47,7 @@ for i in range(len(confidence_map)):
     # Calculates and visualizes local extrema in the confidence map.
     extrema = get_local_extrema(smoothed_confidence_map,
         min_value=extreme_min_value(smoothed_confidence_map),
+        peak_estimation_threshold=peak_estimation_threshold,
         plot_gradient=plot_gradient,
         plot_3d=plot_3d)
     if show_information_loss:
@@ -60,7 +61,7 @@ for i in range(len(confidence_map)):
         visualize_extrema_windows(filtered_extrema,
             image,
             character_map[i],
-            out=extrema_file_path + "/conf_level_" + str(i) + "/",
+            out=extrema_file_path + "/conf_level_" + str(i+1) + "/",
             window_size=window_size,
             step_size=step_size)
 
@@ -95,4 +96,5 @@ for i in range(len(confidence_map)):
         print_transcripts(filtered_transcripts[i])
 
 sort_by_relevance(filtered_transcripts, cnn_confidence_weight, ngrams_likelihood_weight)
-write_to_file(transcript_output_filename, filtered_transcripts[0][0]['word'])
+try: write_to_file(transcript_output_filename, filtered_transcripts[0][0]['word'])
+except IndexError: pass
