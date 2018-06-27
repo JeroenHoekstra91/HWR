@@ -10,7 +10,7 @@ function [line_bin] = remove_boundary_noise(line_bin)
         toKeep = CC.PixelIdxList{i};
         new_line(toKeep) = 1;
         mean = mean_y(new_line);
-        if (mean > row*0.8) | (mean < row*0.2)
+        if (mean > row*0.85) | (mean < row*0.15)
                 line_bin(CC.PixelIdxList{i}) = 1;
         end
     end

@@ -13,7 +13,7 @@ function [word_positions] = word_histogram(line_bin)
     % make all the cols having words, a negative threshold
     H (H > 0.5) = -5;
     
-    % all the gas now have a positive peaks
+    % all the gaps now have a positive peaks
     H = H + 5;
     
     % smoothen the peaks
@@ -27,14 +27,13 @@ function [word_positions] = word_histogram(line_bin)
     % H_sm at this point contains the spaces
     CC = bwconncomp(H_sm);
     numPixels = cellfun(@numel,CC.PixelIdxList);
-    S = std(numPixels);
-    mu = mean(numPixels);
-    rm_large_gaps = numPixels(numPixels < mu);
-    S = std(rm_large_gaps);
-    mu = mean(rm_large_gaps);
+    %S = std(numPixels);
+    %mu = mean(numPixels);
+    %rm_large_gaps = numPixels(numPixels < mu);
+    %S = std(rm_large_gaps);
+    %mu = mean(rm_large_gaps);
     
-    
-    toRemove = (mu - numPixels > 0);
+    toRemove = (numPixels < 9);
     for i=1:length(toRemove) 
         if toRemove(i)
             toRemoveImg = CC.PixelIdxList{i};
@@ -53,7 +52,7 @@ function [word_positions] = word_histogram(line_bin)
     word_positions = zeros(length(numPixels),2);
     
     for i=2:length(numPixels)
-        if numPixels(i) > 10
+        if numPixels(i) > 30
             word_positions(i-1,1) = min(CC.PixelIdxList{i});
             word_positions(i-1,2) = max(CC.PixelIdxList{i});
         end

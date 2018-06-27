@@ -8,30 +8,18 @@ function seg = line_segmentation_bin_line(BW, R)
 %       R: Reference image
 %
 %       OUTPUT
-%       seg: cell array of segmented lines in R extracted from the original binarized parchment only image
+%       seg: cell array of segmented lines in R
 
     %Fuse background with parchment
     bin_parch = BW;
     BW = remove_cc(BW);
     
-    % Select orientation that will maximise the histogram peak height
-    best_score = 0;
-    best_orientation = Inf;
-    for a = -10:2:10
-        BW2 = imrotate(~BW, a, 'nearest', 'crop'); %image is inverted so that background added from rotation is the same
-        [H, baselines, ~] = line_histogram2(~BW2); %reinvert the image to get black chars
-
-        total_peaks = sum(H(baselines));
-        if total_peaks > best_score
-            best_score = total_peaks;
-            best_orientation = a;
-        end
-    end
-    BW = imrotate(~BW, best_orientation, 'nearest', 'crop');
-    R = imrotate(R, best_orientation, 'nearest', 'crop');
-    BW = ~BW;
-    
+    [BW, angle] = rotating_histogram(BW);
     [~, baselines, ~] = line_histogram2(BW);    
+    
+    R = imrotate(R, angle, 'nearest', 'crop');
+    bin_parch = imrotate(bin_parch, angle, 'nearest', 'crop');
+    
     assert(length(baselines) >= 2);
     
     seg = cell(length(baselines), 1);
