@@ -16,8 +16,8 @@ function BW = remove_background_cc(BW)
         new_line(toKeep) = 1;
         new_line = imerode(new_line, strel('rectangle', [3, 3]));
         struc = ones(struc_size,struc_size);
-        if (numPixels(i)>struc_size*col) &  (existence_submatrix(new_line,struc)) 
-        %if existence_submatrix(new_line,struc)
+        %if (numPixels(i)>struc_size*col) &  (existence_submatrix(new_line,struc)) 
+        if existence_submatrix(new_line,struc)
                 BW(CC.PixelIdxList{i}) = 1;
         end
     end
