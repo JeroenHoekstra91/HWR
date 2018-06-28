@@ -1,9 +1,9 @@
 import numpy as np
 
 #### MISC #####
-show_information_loss = True
-show_transcripts = True
-image_file = "data/words/EDITED.png"
+show_information_loss = False
+show_transcripts = False
+word_segment_images_diretory = "data/word_segments"
 
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"

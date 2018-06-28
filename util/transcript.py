@@ -1,6 +1,6 @@
 import numpy as np
 import types
-from util.character_map import hebrew_map
+from util.character_map import to_hebrew
 
 
 def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map,
@@ -66,14 +66,6 @@ def write_to_file(filename, word):
     file = open(filename, "a")
     file.write(to_hebrew(word) + "\n")
     file.close()
-
-
-def to_hebrew(word):
-    hebrew = ""
-    for character in word.split(" "):
-        hebrew += hebrew_map[character]
-    return hebrew
-
 
 def sort_by_relevance(transcripts, cnn_confidence_weight=1, ngrams_likelihood_weight=1):
     transcripts[0].sort(key=lambda x:
