@@ -36,7 +36,7 @@ function binarization_gui
     ax = axes('Units','pixels');
 	update
     
-    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'adaptive', 'after CC', 'line segmentation', 'test'};
+    source_list = {'original','parchment only','sauvola', 'median filter', 'otsu', 'adaptive', 'after CC', 'line segmentation', 'binarized lines','test'};
     
     % Create pop-up menu
     popup = uicontrol('Style', 'popup',...
@@ -235,7 +235,8 @@ function binarization_gui
                 lines = line_segmentation2  (BW, I);
                 O1 = lines_segmented_visualization(lines);
             case 'test'
-                O1 = tests(P);
+                BW = binarization(P, sz, k, 'sauvola');
+                O1 = tests(I, P, BW);
         end
         switch src2
             case 'original'
@@ -261,9 +262,16 @@ function binarization_gui
                 BW = binarization(P, sz, k, 'sauvola');
                 lines = line_segmentation2(BW, I);
                 O2 = lines_segmented_visualization(lines);
+            case 'binarized lines'
+                BW = binarization(P, sz, k, 'sauvola');
+                lines = line_segmentation2(BW, I);
+                for i = 1:length(lines)
+                    lines{i} = binarization(lines{i}, lines{i}, k, 'sauvola');
+                end
+                O2 = lines_segmented_visualization(lines);
             case 'test'
                 BW = binarization(P, sz, k, 'sauvola');
-                O2 = tests(BW);
+                O2 = tests(I, P, BW);
         end
         if left_hoverlay && ~ strcmp('line segmentation', src1)
             BW = binarization(P, sz, k, 'sauvola');
