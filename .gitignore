@@ -213,3 +213,6 @@ images2/
 augment/
 data/words
 Hebrew.txt
+
+# VSCode IDE
+.vscode/
