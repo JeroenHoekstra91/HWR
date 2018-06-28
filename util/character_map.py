@@ -90,6 +90,7 @@ flat_map = {
     "Waw": "y",
     "Yod": "z",
     "Zayin": "0",
+    "": "1"
 }
 
 def to_hebrew(word):
