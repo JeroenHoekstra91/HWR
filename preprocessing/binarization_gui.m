@@ -264,10 +264,7 @@ function binarization_gui
                 O2 = lines_segmented_visualization(lines);
             case 'binarized lines'
                 BW = binarization(P, sz, k, 'sauvola');
-                lines = line_segmentation2(BW, I);
-                for i = 1:length(lines)
-                    lines{i} = binarization(lines{i}, lines{i}, k, 'sauvola');
-                end
+                lines = line_segmentation2(BW, BW*255);
                 O2 = lines_segmented_visualization(lines);
             case 'test'
                 BW = binarization(P, sz, k, 'sauvola');

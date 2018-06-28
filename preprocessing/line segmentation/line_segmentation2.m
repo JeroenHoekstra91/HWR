@@ -26,7 +26,7 @@ function seg = line_segmentation2(BW, R)
     for i = 1:length(baselines)
         l = baselines(i);
         
-        % Reconstruction for including the ascenders (but no the 'descenders')
+        % Reconstruction for including the ascenders
         upper_bound = max(1, l-10);
         lower_bound = min(size(BW, 1), l+0);
 
@@ -35,7 +35,7 @@ function seg = line_segmentation2(BW, R)
         S(lower_bound:end, :) = 255;
         S = ~S;
         BW2 = BW;
-%         BW2(lower_bound:end, :) = 255; %prevent reconstruction downwards
+
         S2 = imreconstruct(S, ~BW2);
         
         %find new bounds
@@ -45,17 +45,7 @@ function seg = line_segmentation2(BW, R)
         lower_bound = rows(end);
     
         seg{i} = R(upper_bound:lower_bound, :);
-        
-        
-        %Just or debugging
-        s = BW(upper_bound:lower_bound, :);
-        [H, baseline, gaps] = line_histogram2(s);
-%         seg{i} = histogram_visualization(seg{i}, H);
-%         seg{i} = visualize_baselines(seg{i}, baselines, baselines);
-        if length(gaps) > 0
-            disp(['line #: ' num2str(i) ', detected lines: ' num2str(length(baseline))]);
-            disp(['line #: ' num2str(i) ', detected gaps: ' num2str(length(gaps))]);
-        end
+
     end
 end
 
