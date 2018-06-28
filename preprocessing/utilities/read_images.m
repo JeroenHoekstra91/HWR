@@ -1,36 +1,23 @@
-function [bw, rgb] = read_images(data_dir)
+function [imgs, file_names] = read_images(data_dir)
+    warning('off', 'backtrace')
     % List all files
     dir_list = dir(data_dir); % All files with its metadata
-    
-    % Keep only jpg images and separate color from grayscale
-    idx = 0;
-    bw = {};
-    rgb = {};
+    dir_list = dir_list(~[dir_list.isdir]);
+    imgs = {};
+    file_names = {};
     for i = 1:length(dir_list)
         file_name = dir_list(i).name;
-        if file_name(1) == '.' | ~contains(file_name, '.jpg') %not an image we are interested in
+        try
+            I = imread(fullfile(data_dir, file_name));
+        catch ex
+            warning(['File ', file_name, ' could not be read as an image. Skipping...'])
             continue;
         end
-        if contains(file_name, 'fused') %BW
-            bw{end+1} = imread(strcat(data_dir, file_name));
-        else %RGB
-            rgb{end+1} = imread(strcat(data_dir, file_name));
+        file_names{end+1} = file_name;
+        if length(size(I)) > 2
+            warning(['Our pipeline only works for gray images, converting ', file_name, ' to gray values']);
+            I = rgb2gray(I);
         end
+        imgs{end+1} = I;
     end
-    
-%     files = [dir_list.name]; % All file names in a single string
-%     files = files(4:length(files)); % Skip '.' and '..'
-%     files = split(files, '.jpg'); % Split one row per file name without extension
-%     bw = {};
-%     % Separate BW from RGB images
-%     for i = 1:length(files)
-%         if contains(files(i), 'fused')
-%             bw_paths = string(data_dir) + string('/') + files(i) + string('.jpg'); 
-%             bw{end+1} = imread(char(bw_paths));
-%         end
-% %         else
-% %             rgb_paths = string(data_dir) + string('/') + files(i) + string('.jpg'); 
-% %             rgb{i} = imread(char(rgb_paths));
-% %         end
-%     end
 end

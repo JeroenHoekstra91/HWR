@@ -1,8 +1,8 @@
-function O = tests(I)
-    segm = line_segmentation2(I, I);
-    S = segm{7};
-    [H, baseline, gap] = line_histogram2(S);
-    
-    O = visualize_baselines(histogram_visualization(S, H), baseline, gap);
-    
+function O = tests(I, P, BW)
+%     lines = line_segmentation2(BW, P);
+%     O = adaptive_water_flow(lines{4});
+    segm = line_segmentation2(BW, P);
+    im = segm{3};
+    O = adaptive_water_flow(im);
+%     O(end, end+size(segm{3}
 end
