@@ -3,6 +3,8 @@ import numpy as np
 #### MISC #####
 show_information_loss = False
 show_transcripts = False
+output_pipeline1 = "pipeline1-output-wordsegments/"
+output_pipeline2 = "pipeline2-output-transcripts/"
 
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"

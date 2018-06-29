@@ -74,21 +74,11 @@ def transcribe(image_file, window_size):
     try: return filtered_transcripts[0]['word']
     except: return ""
 
-image_files = listdir(word_segment_images_directory)
-transcripts = []
-accuracy_sum = 0.0
-for image in image_files:
-    print "analyzing " + image
-    label = " ".join(".".join(image.split(".")[:-1]).split("_"))
-    transcript = transcribe(word_segment_images_directory + image, window_size)
-    accuracy = jellyfish.jaro_distance(
-        to_flat(label).decode('unicode-escape'),
-        to_flat(transcript).decode('unicode-escape'))
-    accuracy_sum += accuracy
 
-    transcripts.append({
-        "label": label,
-        "transcript": transcript,
-        "accuracy": accuracy
-        })
-    break
+def pipeline2(word_segment_images_directory, transcript_output_filename):
+    image_files = listdir(word_segment_images_directory)
+    print image_files
+
+    for image in image_files:
+        transcript = transcribe(word_segment_images_directory + image, window_size)
+        write_to_file(transcript_output_filename, transcript)
