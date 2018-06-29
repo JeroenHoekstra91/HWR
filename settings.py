@@ -7,7 +7,6 @@ show_transcripts = False
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"
 cnn_confidence_weight = 1
-topN = 3                                                        # Use the top N character predictions
 image_padding = 5
 
 #### N-GRAM SETTINGS ####
@@ -24,14 +23,13 @@ visualize_sliding_window = False
 sliding_window_delay = 20                                       # determines the sliding window visualization speed
 
 #### HISTOGRAM SETTINGS ####
-peak_estimation_threshold = lambda x: np.average(x) - x.std()
-extreme_min_value = lambda x: np.average(x) + x.std()           # minimal confidence score filter
-visualize_extrema = True
+histogram_threshold = lambda x: np.average(x) - x.std()
+min_confidence = 0
+visualize_extrema = False
 extrema_file_path = "extrema/"                                  # determines where to store the extrema window images
 plot_histogram = False
 
 #### GROUPING SETTINGS ####
 min_group_size = 1
-max_pixel_distance = 5                                          # determines what is considered a neighbouring window
+max_pixel_distance = 1                                          # determines what is considered a neighbouring window
 max_windows = 450                                               # prevents the window grouping algorithm from stalling
-min_character_distance = window_size/2                          # determines when a window group is considered overlapping

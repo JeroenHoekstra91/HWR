@@ -1,12 +1,12 @@
+from util.character_map import char_map
 import numpy as np
 import cv2
 
 
-def slide_window(word_segment, cnn, window_size=50, step_size=1, topN=3, visualize=False, sliding_window_delay=100):
+def slide_window(word_segment, cnn, window_size=50, step_size=1, visualize=False, sliding_window_delay=100):
     segment_width = len(word_segment[0])
     segment_height = len(word_segment)
 
-    window_size = np.min((window_size, segment_width, segment_height))
     window_x = 0
     window_y = 0
 
@@ -15,14 +15,14 @@ def slide_window(word_segment, cnn, window_size=50, step_size=1, topN=3, visuali
 
     map_width = x_iterations
     map_height = y_iterations
-    confidence_map = [np.zeros((map_height, map_width)) for _ in range(topN)]
-    character_map = [[['' for _ in range(map_width)] for _ in range(map_height)] for _ in range(topN)]
+    confidence_map = [np.zeros((map_height, map_width)) for _ in range(len(char_map.keys()))]
+    character_map = [[['' for _ in range(map_width)] for _ in range(map_height)] for _ in range(len(char_map.keys()))]
 
     # Slide window and analyze the character
     for i in range(y_iterations):
         for j in range(x_iterations):
             window = word_segment[window_y:(window_size + window_y), window_x:(window_size + window_x)]
-            results = _analyze_window(window, cnn, topN=topN, visualize=visualize,
+            results = _analyze_window(window, cnn, visualize=visualize,
                                       sliding_window_delay=sliding_window_delay)
 
             for k in range(len(results)):
@@ -61,7 +61,7 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
                 window_size=window_size, step_size=step_size)
 
             # Make sure that group members have the same label
-            if character_map[extrema[i][0]][extrema[i][1]] != character_map[extrema[j][0]][extrema[j][1]]:
+            if get_label(extrema[i], character_map) != get_label(extrema[j], character_map):
                 continue
 
             if _distance(coor1[0], coor1[1], coor2[0], coor2[1]) <= max_distance:
@@ -131,15 +131,37 @@ def image_coordinate_to_map_coordinate(x, y, window_size=50, step_size=1):
     return xx, yy
 
 
+def get_label(coordinate, character_map):
+    label = ""
+    for i in range(len(character_map)):
+        try:
+            label = character_map[i][coordinate[0]][coordinate[1]]
+        except IndexError:
+            label = character_map[i][coordinate[0]][len(character_map[i]) - 1]
+        if label != "Noise":
+            return label
+
+def get_confidence(coordinate, character_map, confidence_map):
+    label = ""
+    xx = coordinate[1]
+    for i in range(len(character_map)):
+        try:
+            label = character_map[i][coordinate[0]][coordinate[1]]
+        except IndexError:
+            label = character_map[i][coordinate[0]][len(character_map[i]) - 1]
+            xx = len(character_map[i]) - 1
+        if label != "Noise":
+            return confidence_map[i][coordinate[0]][xx]
+
 #### HELPER FUNCTIONS ####
 
-def _analyze_window(window, cnn, topN=3, visualize=False, sliding_window_delay=100):
+def _analyze_window(window, cnn, visualize=False, sliding_window_delay=100):
     if visualize:
         cv2.imshow("Sliding Window", window)
         cv2.waitKey(sliding_window_delay)
 
     total, results = cnn.analyze_character(window)
-    results = sorted(results.items(), reverse=True)[:topN]
+    results = sorted(results.items(), reverse=True)[:len(char_map.keys())]
     return results
 
 

@@ -1,29 +1,33 @@
 import numpy as np
 import types
+from util.sliding_window import *
 from util.character_map import to_hebrew
 
 
-def generate_transcripts(ngrams_model, sorted_window_groups, character_map, confidence_map,
+def generate_transcripts(ngrams_model, window_groups, character_map, confidence_map,
     ngrams_depth=2, ngrams_weights=[.4,.6]):
     
     transcripts = {}
-    end = np.zeros((1, len(sorted_window_groups)))
-    for i in range(len(sorted_window_groups)):
-        end[0, i] = len(sorted_window_groups[i])
+    end = np.zeros((1, len(window_groups)))
+    for i in range(len(window_groups)):
+        end[0, i] = len(window_groups[i])
 
     for counter in _count(end):
         word = ""
         number_of_windows = []
         cnn_confidence_sum = 0
 
-        for i in range(len(sorted_window_groups)):
-            group = sorted_window_groups[i][int(counter[0, i])]
-            character = character_map[group[0][0]][group[0][1]]
+        for i in range(len(window_groups)):
+            if(len(window_groups[i]) == 0):
+                continue
+
+            group = window_groups[i][int(counter[0, i])]
+            character = get_label(group[0], character_map)
             word += character + " "
             number_of_windows.append(len(group))
 
             for coor in group:
-                cnn_confidence_sum += confidence_map[coor[0], coor[1]]
+                cnn_confidence_sum += get_confidence(coor, character_map, confidence_map)
 
         word = word.strip()
         word = " ".join(word.split(" ")[::-1])
@@ -68,7 +72,7 @@ def write_to_file(filename, word):
     file.close()
 
 def sort_by_relevance(transcripts, cnn_confidence_weight=1, ngrams_likelihood_weight=1):
-    transcripts[0].sort(key=lambda x:
+    transcripts.sort(key=lambda x:
         x["cnn_confidence_sum"] * cnn_confidence_weight +
         x["ngrams_likelihood"] * ngrams_likelihood_weight,
         reverse=True)
