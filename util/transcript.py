@@ -6,14 +6,26 @@ from util.character_map import to_hebrew
 
 def generate_transcripts(ngrams_model, window_groups, character_map, confidence_map,
     ngrams_depth=2, ngrams_weights=[.4,.6]):
-    transcripts = []
     sort_window_groups(window_groups, character_map, confidence_map)
     transcripts, confidence_sums, windows = traverse_characters(ngrams_model,
         list(window_groups[::-1]),
         character_map,
         confidence_map,
         ngrams_weights=ngrams_weights)
-    return transcripts, confidence_sums, windows
+
+    transcript_map = []
+    for i in range(len(transcripts)):
+        ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model,
+            transcripts[i], 
+            ngrams_depth=ngrams_depth,
+            ngrams_weights=ngrams_weights)
+        transcript_map.append({
+                "cnn_confidence_sum": confidence_sums[i],
+                "number_of_windows": windows[i],
+                "word": transcripts[i],
+                "ngrams_likelihood": ngrams_likelihood
+            })
+    return transcript_map
 
 
 def traverse_characters(ngrams_model, window_groups, character_map, confidence_map, 
@@ -69,55 +81,6 @@ def traverse_characters(ngrams_model, window_groups, character_map, confidence_m
             windows += group_sizes
         word = word[:-1]
     return transcripts, confidence_sums, windows
-
-
-
-
-def generate_transcripts_depricated(ngrams_model, window_groups, character_map, confidence_map,
-    ngrams_depth=2, ngrams_weights=[.4,.6]):
-    
-    transcripts = {}
-    end = np.zeros((1, len(window_groups)))
-    for i in range(len(window_groups)):
-        end[0, i] = len(window_groups[i])
-
-    for counter in _count(end):
-        word = ""
-        number_of_windows = []
-        cnn_confidence_sum = 0
-
-        for i in range(len(window_groups)):
-            if(len(window_groups[i]) == 0):
-                continue
-
-            group = window_groups[i][int(counter[0, i])]
-            character = get_label(group[0], character_map)
-            word += character + " "
-            number_of_windows.append(len(group))
-
-            for coor in group:
-                cnn_confidence_sum += get_confidence(coor, character_map, confidence_map)
-
-        word = word.strip()
-        word = " ".join(word.split(" ")[::-1])
-        number_of_windows = number_of_windows[::-1]
-
-        if word in transcripts.keys():
-            transcripts[word]["cnn_confidence_sum"] += cnn_confidence_sum
-            for i in range(len(number_of_windows)):
-                transcripts[word]["number_of_windows"][i] += number_of_windows[i]
-        else:
-            ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model, word, 
-                ngrams_depth=ngrams_depth, ngrams_weights=ngrams_weights)
-
-            transcripts[word] = {}
-            transcripts[word]["ngrams_likelihood"] = ngrams_likelihood
-            transcripts[word]["cnn_confidence_sum"] = cnn_confidence_sum
-            transcripts[word]["number_of_windows"] = number_of_windows
-
-    transcripts = [dict({"word": key}, **value) for (key, value) in transcripts.items()]
-    transcripts.sort(key=lambda x: x["cnn_confidence_sum"], reverse=True)
-    return transcripts
 
 
 def calculate_ngrams_likelihood(model, word, ngrams_depth=2, ngrams_weights=[.4,.6]):
