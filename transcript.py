@@ -13,7 +13,7 @@ cnn = CNN(cnn_model)
 ngrams_model = Ngrams(bayesian_model)
 
 # def transcribe(image_file, window_size):
-image = cv2.imread("data/MapStructure/Alef_Yod_Shin_Bet_Shin_Resh_Yod_Resh_Waw_Taw_Lamed_Bet_Waw.jpeg")
+image = cv2.imread("data/MapStructure/Taw_Kaf_Yod_Alef.jpeg")
 image = pad_image(image, padding=image_padding)
 window_size = min((window_size, len(image), len(image[0])))
 
@@ -64,12 +64,12 @@ if show_information_loss:
         operation_label="merging window groups")
 
 # Generate and filter possible transcripts.
-transcripts = generate_transcripts(ngrams_model,
-    window_groups,
-    character_map,
-    confidence_map,
-    ngrams_depth=ngrams_depth,
-    ngrams_weights=ngrams_weights)
+# transcripts = generate_transcripts(ngrams_model,
+#     window_groups,
+#     character_map,
+#     confidence_map,
+#     ngrams_depth=ngrams_depth,
+#     ngrams_weights=ngrams_weights)
 # filtered_transcripts = filter_transcripts(transcripts,
 #     ngrams_likelihood_threshold=ngrams_likelihood_threshold)
 

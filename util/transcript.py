@@ -6,6 +6,60 @@ from util.character_map import to_hebrew
 
 def generate_transcripts(ngrams_model, window_groups, character_map, confidence_map,
     ngrams_depth=2, ngrams_weights=[.4,.6]):
+    transcripts = []
+    sort_window_groups(window_groups, character_map, confidence_map)
+    
+    return traverse_characters(ngrams_model,
+        list(window_groups[::-1]),
+        character_map,
+        confidence_map,
+        ngrams_weights=ngrams_weights)
+
+def traverse_characters(ngrams_model, window_groups, character_map, confidence_map, 
+    ngrams_weights=[.4,.6], word=[], character_index=0):
+    transcripts = []
+    sequence_end = 0
+    for group_index in range(len(window_groups[character_index])):
+        word.append(get_label(window_groups[character_index][group_index][0], character_map))
+
+        # exit on likelihood == 0 for all possible characters at position character_index
+        if len(word) >= 2:
+            ngrams_likelihood = ngrams_model.classify(word[-1], "_".join(word[-2:-1]))
+            if ngrams_likelihood == 0:
+                word = word[:-1]
+                sequence_end += 1
+                if sequence_end == len(window_groups[character_index]):
+                    return -1
+                continue
+
+        # exit on word end
+        if len(word) == len(window_groups):
+            return [" ".join(word)]
+
+        # traverse deeper
+        transcript = traverse_characters(ngrams_model,
+            window_groups,
+            character_map,
+            confidence_map,
+            ngrams_weights=ngrams_weights,
+            word=list(word), 
+            character_index=character_index + 1)
+
+        if transcript == -1:
+            if group_index == len(window_groups[character_index])-1 and len(transcripts) == 0:
+                # prune possible characters
+                print "pruning"
+                window_groups[character_index].pop(group_index)
+        else:
+            transcripts += transcript
+        word = word[:-1]
+    return transcripts
+
+
+
+
+def generate_transcripts_depricated(ngrams_model, window_groups, character_map, confidence_map,
+    ngrams_depth=2, ngrams_weights=[.4,.6]):
     
     transcripts = {}
     end = np.zeros((1, len(window_groups)))

@@ -108,6 +108,16 @@ def merge_window_groups_by_label(window_groups, character_map):
         
     return window_groups
 
+def sort_window_groups(window_groups, character_map, confidence_map):
+    for character_position in window_groups:
+        character_position.sort(key=lambda x: sum_confidences(x, character_map, confidence_map), 
+            reverse=True)
+
+def sum_confidences(window_group, character_map, confidence_map):
+    total = 0
+    for coor in window_group:
+        total += get_confidence(coor, character_map, confidence_map)
+    return total
 
 
 def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
