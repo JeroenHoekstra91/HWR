@@ -56,9 +56,9 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
     for i in range(elements):
         for j in range(elements):
             coor1 = map_coordinate_to_image_coordinate(extrema[i][0], extrema[i][1],
-                                                       window_size=window_size, step_size=step_size)
+                window_size=window_size, step_size=step_size)
             coor2 = map_coordinate_to_image_coordinate(extrema[j][0], extrema[j][1],
-                                                       window_size=window_size, step_size=step_size)
+                window_size=window_size, step_size=step_size)
 
             # Make sure that group members have the same label
             if character_map[extrema[i][0]][extrema[i][1]] != character_map[extrema[j][0]][extrema[j][1]]:
