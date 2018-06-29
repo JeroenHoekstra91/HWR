@@ -91,32 +91,33 @@ def get_window_groups(extrema, character_map, window_size=50, step_size=1, min_g
     return window_groups
 
 
-def sort_window_groups(window_groups, min_character_distance=25):
-    assigned, groups = [], []
-    sorted_window_groups = sorted(window_groups, key=lambda x: _get_window_group_center(x)[1])
+def merge_window_groups_by_label(window_groups, character_map):
+    label_maps = []
+    for character_position in window_groups:
+        label_maps.append({})
+        for group in character_position:
+            label = get_label(group[0], character_map)
+            if label in label_maps[-1].keys():
+                label_maps[-1][label] += group
+            else:
+                label_maps[-1][label] = group
 
-    for group1 in sorted_window_groups:
-        if group1 in assigned:
-            continue
+    window_groups = list(window_groups)
+    for i in range(len(window_groups)):
+        window_groups[i] = label_maps[i].values()
+        
+    return window_groups
 
-        assigned.append(group1)
-        groups.append([group1])
+def sort_window_groups(window_groups, character_map, confidence_map):
+    for character_position in window_groups:
+        character_position.sort(key=lambda x: sum_confidences(x, character_map, confidence_map), 
+            reverse=True)
 
-        for group2 in sorted_window_groups:
-            if group1 == group2 or group2 in assigned:
-                continue
-
-            center1 = _get_window_group_center(group1)
-            center2 = _get_window_group_center(group2)
-
-            if _distance(0, center1[1], 0, center2[1]) < min_character_distance:
-                assigned.append(group2)
-                groups[-1].append(group2)
-
-    for i in range(len(groups)):
-        groups[i].sort(key=lambda x: len(x), reverse=True)
-
-    return groups
+def sum_confidences(window_group, character_map, confidence_map):
+    total = 0
+    for coor in window_group:
+        total += get_confidence(coor, character_map, confidence_map)
+    return total
 
 
 def map_coordinate_to_image_coordinate(x, y, window_size=50, step_size=1):
