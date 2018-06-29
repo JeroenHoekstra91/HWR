@@ -34,4 +34,4 @@ plot_histogram = False
 #### GROUPING SETTINGS ####
 min_group_size = 1
 max_pixel_distance = 1                                          # determines what is considered a neighbouring window
-max_windows = 450                                               # prevents the window grouping algorithm from stalling
+max_windows = 500                                               # prevents the window grouping algorithm from stalling

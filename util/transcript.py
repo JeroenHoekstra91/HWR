@@ -14,17 +14,20 @@ def generate_transcripts(ngrams_model, window_groups, character_map, confidence_
         ngrams_weights=ngrams_weights)
 
     transcript_map = []
-    for i in range(len(transcripts)):
-        ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model,
-            transcripts[i], 
-            ngrams_depth=ngrams_depth,
-            ngrams_weights=ngrams_weights)
-        transcript_map.append({
-                "cnn_confidence_sum": confidence_sums[i],
-                "number_of_windows": windows[i],
-                "word": transcripts[i],
-                "ngrams_likelihood": ngrams_likelihood
-            })
+    try:
+        for i in range(len(transcripts)):
+            ngrams_likelihood = calculate_ngrams_likelihood(ngrams_model,
+                transcripts[i], 
+                ngrams_depth=ngrams_depth,
+                ngrams_weights=ngrams_weights)
+            transcript_map.append({
+                    "cnn_confidence_sum": confidence_sums[i],
+                    "number_of_windows": windows[i],
+                    "word": transcripts[i],
+                    "ngrams_likelihood": ngrams_likelihood
+                })
+    except:
+        return []
     return transcript_map
 
 
@@ -48,7 +51,7 @@ def traverse_characters(ngrams_model, window_groups, character_map, confidence_m
                 continue
         
         # exit on word end
-        if len(word) == len(window_groups):
+        if character_index == len(window_groups) - 1:
             return [" ".join(word)], [sum_confidences(window_groups[character_index][group_index],
                 character_map, confidence_map)], [[len(window_groups[character_index][group_index])]]
         
