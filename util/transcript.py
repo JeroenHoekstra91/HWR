@@ -8,20 +8,23 @@ def generate_transcripts(ngrams_model, window_groups, character_map, confidence_
     ngrams_depth=2, ngrams_weights=[.4,.6]):
     transcripts = []
     sort_window_groups(window_groups, character_map, confidence_map)
-    
-    return traverse_characters(ngrams_model,
+    transcripts, confidence_sums, windows = traverse_characters(ngrams_model,
         list(window_groups[::-1]),
         character_map,
         confidence_map,
         ngrams_weights=ngrams_weights)
+    return transcripts, confidence_sums, windows
+
 
 def traverse_characters(ngrams_model, window_groups, character_map, confidence_map, 
     ngrams_weights=[.4,.6], word=[], character_index=0):
     transcripts = []
+    confidence_sums = []
+    windows = []
     sequence_end = 0
+    
     for group_index in range(len(window_groups[character_index])):
         word.append(get_label(window_groups[character_index][group_index][0], character_map))
-
         # exit on likelihood == 0 for all possible characters at position character_index
         if len(word) >= 2:
             ngrams_likelihood = ngrams_model.classify(word[-1], "_".join(word[-2:-1]))
@@ -29,31 +32,43 @@ def traverse_characters(ngrams_model, window_groups, character_map, confidence_m
                 word = word[:-1]
                 sequence_end += 1
                 if sequence_end == len(window_groups[character_index]):
-                    return -1
+                    return -1, -1, -1
                 continue
-
+        
         # exit on word end
         if len(word) == len(window_groups):
-            return [" ".join(word)]
-
+            return [" ".join(word)], [sum_confidences(window_groups[character_index][group_index],
+                character_map, confidence_map)], [[len(window_groups[character_index][group_index])]]
+        
         # traverse deeper
-        transcript = traverse_characters(ngrams_model,
+        transcript, confidence_sum, group_sizes = traverse_characters(ngrams_model,
             window_groups,
             character_map,
             confidence_map,
             ngrams_weights=ngrams_weights,
             word=list(word), 
             character_index=character_index + 1)
-
+        
         if transcript == -1:
             if group_index == len(window_groups[character_index])-1 and len(transcripts) == 0:
                 # prune possible characters
-                print "pruning"
                 window_groups[character_index].pop(group_index)
         else:
             transcripts += transcript
+            
+            # Add own group cnn confidence
+            own_confidence_sum = sum_confidences(window_groups[character_index][group_index],
+                character_map, confidence_map)
+            for i in range(len(confidence_sum)):
+                confidence_sum[i] += own_confidence_sum
+            confidence_sums += confidence_sum
+            
+            # Add group sizes
+            for i in range(len(group_sizes)):
+                group_sizes[i].insert(0, len(window_groups[character_index][group_index]))
+            windows += group_sizes
         word = word[:-1]
-    return transcripts
+    return transcripts, confidence_sums, windows
 
 
 
