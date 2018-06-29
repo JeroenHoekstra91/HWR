@@ -77,6 +77,8 @@ def transcribe(image_file, window_size):
     sort_by_relevance(filtered_transcripts, cnn_confidence_weight, ngrams_likelihood_weight)
     try: return filtered_transcripts[0]['word']
     except: return ""
+
+
 def pipeline2(word_segment_images_directory, transcript_output_filename):
     image_files = listdir(word_segment_images_directory)
     print image_files

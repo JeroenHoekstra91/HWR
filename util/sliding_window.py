@@ -138,7 +138,7 @@ def get_label(coordinate, character_map):
         try:
             label = character_map[i][coordinate[0]][coordinate[1]]
         except IndexError:
-            label = character_map[i][coordinate[0]][len(character_map[i]) - 1]
+            label = character_map[i][coordinate[0]][len(character_map[i][coordinate[0]]) - 1]
         if label != "Noise":
             return label
 
@@ -149,8 +149,8 @@ def get_confidence(coordinate, character_map, confidence_map):
         try:
             label = character_map[i][coordinate[0]][coordinate[1]]
         except IndexError:
-            label = character_map[i][coordinate[0]][len(character_map[i]) - 1]
-            xx = len(character_map[i]) - 1
+            label = character_map[i][coordinate[0]][len(character_map[i][coordinate[0]]) - 1]
+            xx = len(character_map[i][coordinate[0]]) - 1
         if label != "Noise":
             return confidence_map[i][coordinate[0]][xx]
 

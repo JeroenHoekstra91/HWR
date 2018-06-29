@@ -60,6 +60,7 @@ hebrew_map = {
     "Waw": "ו",
     "Yod": "י",
     "Zayin": "ז",
+    "": " ",
 }
 
 flat_map = {
