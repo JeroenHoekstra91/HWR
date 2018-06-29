@@ -2,8 +2,6 @@ import argparse
 # import matlab.engine
 from transcript import *
 
-word_segment_images_directory = ""
-
 def main():
     parser = argparse.ArgumentParser(description='Transcribes hebrew scripts.')
  
