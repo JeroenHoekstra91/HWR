@@ -6,8 +6,6 @@ from util.histogram import *
 from cnn.cnn import CNN
 from ngrams.ngrams import Ngrams
 from os import listdir
-from util.character_map import *
-import jellyfish
 
 cnn = CNN(cnn_model)
 ngrams_model = Ngrams(bayesian_model)
@@ -82,21 +80,9 @@ def transcribe(image_file):
     try: return filtered_transcripts[0][0]['word']
     except: return ""
 
-image_files = listdir(word_segment_images_directory)
-transcripts = []
-accuracy_sum = 0.0
-for image in image_files:
-    label = " ".join(".".join(image.split(".")[:-1]).split("_"))
-    transcript = transcribe(word_segment_images_directory + image)
-    accuracy = jellyfish.jaro_distance(
-        to_flat(label).decode('unicode-escape'),
-        to_flat(transcript).decode('unicode-escape'))
-    accuracy_sum += accuracy
 
-    transcripts.append({
-        "label": label,
-        "transcript": transcript,
-        "accuracy": accuracy
-        })
-
-print "average accuracy: " + str(accuracy_sum / len(image_files) * 100.0) + "%"
+def pipeline2(word_segment_images_directory):
+    image_files = listdir(word_segment_images_directory)
+    for image in image_files:
+        transcript = transcribe(word_segment_images_directory + image)
+        write_to_file(transcript_output_filename, transcript)

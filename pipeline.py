@@ -1,8 +1,10 @@
 import argparse
 import matlab.engine
+from transcript import *
+
+word_segment_images_directory = ""
 
 def main():
-
     parser = argparse.ArgumentParser(description='Transcribes hebrew scripts.')
  
     parser.add_argument('input_dir', type=str, metavar='input',
@@ -17,6 +19,8 @@ def main():
     eng.addpath(eng.genpath('./preprocessing'))
     print('Done.')
     eng.pipeline1(args.input_dir, args.output_dir, nargout=0)
+
+    pipeline2(args.ouput_dir)
 
 if __name__ == '__main__':
     main()

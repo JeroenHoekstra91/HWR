@@ -1,9 +1,9 @@
 import numpy as np
 
 #### MISC #####
-show_information_loss = True
+show_information_loss = False
 show_transcripts = False
-word_segment_images_directory = "data/MapStructure/"
+# word_segment_images_directory = "data/MapStructure/"
 
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"
