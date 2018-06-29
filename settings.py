@@ -3,7 +3,6 @@ import numpy as np
 #### MISC #####
 show_information_loss = False
 show_transcripts = False
-# word_segment_images_directory = "data/MapStructure/"
 
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"
@@ -36,6 +35,3 @@ min_group_size = 1
 max_pixel_distance = 5                                          # determines what is considered a neighbouring window
 max_windows = 450                                               # prevents the window grouping algorithm from stalling
 min_character_distance = window_size/2                          # determines when a window group is considered overlapping
-
-#### OUTPUT_FILE ####
-transcript_output_filename = "Hebrew.txt"

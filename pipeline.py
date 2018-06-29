@@ -1,5 +1,5 @@
 import argparse
-import matlab.engine
+# import matlab.engine
 from transcript import *
 
 word_segment_images_directory = ""
@@ -14,13 +14,15 @@ def main():
     
     args = parser.parse_args()
 
-    print('Starting Matlab...')
-    eng = matlab.engine.start_matlab()
-    eng.addpath(eng.genpath('./preprocessing'))
-    print('Done.')
-    eng.pipeline1(args.input_dir, args.output_dir, nargout=0)
+    # print('Starting Matlab...')
+    # eng = matlab.engine.start_matlab()
+    # eng.addpath(eng.genpath('./preprocessing'))
+    # print('Done.')
+    # eng.pipeline1(args.input_dir, args.output_dir, nargout=0)
 
-    pipeline2(args.ouput_dir)
+    for root, dirs, files in os.walk(args.output_dir):
+        for dir in dirs:
+            pipeline2(str(root+"/"+dir+"/"), str(dir+".txt"))
 
 if __name__ == '__main__':
     main()

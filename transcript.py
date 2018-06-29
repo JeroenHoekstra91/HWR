@@ -81,7 +81,7 @@ def transcribe(image_file):
     except: return ""
 
 
-def pipeline2(word_segment_images_directory):
+def pipeline2(word_segment_images_directory, transcript_output_filename):
     image_files = listdir(word_segment_images_directory)
     for image in image_files:
         transcript = transcribe(word_segment_images_directory + image)
