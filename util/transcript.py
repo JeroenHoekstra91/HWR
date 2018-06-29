@@ -101,9 +101,14 @@ def calculate_ngrams_likelihood(model, word, ngrams_depth=2, ngrams_weights=[.4,
     return ngrams_likelihood
 
 
-def write_to_file(filename, word):
+def write_to_file(filename, transcript, newWord, newLine):
     file = open(filename, "a")
-    file.write(to_hebrew(word) + "\n")
+    if newWord == True:
+        file.write(" " + to_hebrew(transcript))
+    if(newLine == True):
+        file.write("\n" + to_hebrew(transcript))
+    else:
+        file.write(to_hebrew(transcript))
     file.close()
 
 def sort_by_relevance(transcripts, cnn_confidence_weight=1, ngrams_likelihood_weight=1):

@@ -5,7 +5,6 @@ from util.image import *
 from util.histogram import *
 from cnn.cnn import CNN
 from ngrams.ngrams import Ngrams
-from os import listdir
 
 cnn = CNN(cnn_model)
 ngrams_model = Ngrams(bayesian_model)
@@ -79,10 +78,6 @@ def transcribe(image_file, window_size):
     except: return ""
 
 
-def pipeline2(word_segment_images_directory, transcript_output_filename):
-    image_files = listdir(word_segment_images_directory)
-    print image_files
-
-    for image in image_files:
-        transcript = transcribe(word_segment_images_directory + image, window_size)
-        write_to_file(transcript_output_filename, transcript)
+def pipeline2(word_segment, transcript_output_filename, newWord, newLine):
+    transcript = transcribe(word_segment, window_size)
+    write_to_file(transcript_output_filename, transcript, newWord, newLine)
