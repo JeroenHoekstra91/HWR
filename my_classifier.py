@@ -23,7 +23,7 @@ def main():
     eng.addpath(eng.genpath('./preprocessing'))
     print('Done.')
     eng.pipeline1(args.input_dir, output_pipeline1, nargout=0)
-
+    #
     if os.path.isdir(output_pipeline2):
         shutil.rmtree(output_pipeline2)
     os.mkdir(output_pipeline2)
@@ -37,12 +37,14 @@ def main():
 
             startWord = file.find('Word')
             word = file[startWord+5:].split(".")[0]
+            if int(word) == 1: wordNumber = int(word)
             if int(word) > wordNumber:
                 newWord = True
                 wordNumber = int(word)
 
             startLine = file.find('Line')
             line = file[startLine+5:].split("_")[0]
+            if int(line) == 1: lineNumber = int(line)
             if int(line) > lineNumber:
                 newLine = True
                 lineNumber = int(line)
