@@ -17,7 +17,7 @@ def visualize_extrema_windows(extrema, image, character_map, out="extrema/", win
     for character_position in extrema:
         for coor in character_position:
             font = cv2.FONT_HERSHEY_SIMPLEX
-            label = character_map[coor[0]][coor[1]]
+            label = get_label(coor, character_map)
             image_extreme = image.copy()
             image_coor = map_coordinate_to_image_coordinate(coor[0], coor[1],
                                                             window_size=window_size, step_size=step_size)

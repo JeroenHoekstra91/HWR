@@ -8,7 +8,6 @@ word_segment_images_directory = "data/MapStructure/"
 #### CNN SETTINGS ####
 cnn_model = "cnn/models/ModelTrainedWithNoise.model"
 cnn_confidence_weight = 1
-topN = 1                                                        # Use the top N character predictions
 image_padding = 5
 
 #### N-GRAM SETTINGS ####
@@ -26,7 +25,8 @@ sliding_window_delay = 20                                       # determines the
 
 #### HISTOGRAM SETTINGS ####
 histogram_threshold = lambda x: np.average(x) - x.std()
-visualize_extrema = True
+min_confidence = 0
+visualize_extrema = False
 extrema_file_path = "extrema/"                                  # determines where to store the extrema window images
 plot_histogram = False
 
